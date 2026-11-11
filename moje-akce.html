@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Moje akce | ČZU Events</title>
+  <meta name="description" content="Přehled akcí na ČZU, na které jste přihlášeni, s možností odhlášení.">
+  <link rel="icon" href="img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/role.js"></script>
+  <script src="js/data.js" defer></script>
+  <script src="js/app.js" defer></script>
+  <script src="js/moje-akce.js" defer></script>
+</head>
+<body data-koren="">
+  <a class="preskocit" href="#obsah">Přeskočit na obsah</a>
+
+  <header>
+    <p class="projekt-lista">Studentský projekt na PEF ČZU. Nejde o oficiální web univerzity.</p>
+
+    <div class="zahlavi">
+      <div class="obal zahlavi-obsah">
+        <a class="logo" href="index.html" aria-label="ČZU Events">
+          <span class="logo-znak"><img src="img/czu-logo.png" alt="" width="447" height="447"></span>
+          <span>Events</span>
+        </a>
+        <button type="button" class="menu-tlacitko" id="menu-tlacitko" aria-expanded="false" aria-controls="menu">
+          <span aria-hidden="true">☰</span>
+          <span class="skryte-vizualne">Menu</span>
+        </button>
+        <div class="menu" id="menu">
+          <nav class="navigace" aria-label="Hlavní navigace">
+            <ul>
+              <li data-role="student"><a href="moje-akce.html" aria-current="page">Moje akce</a></li>
+              <li><a href="akce.html">Akce</a></li>
+              <li data-role="poradatel"><a href="poradatel.html">Pro pořadatele</a></li>
+            </ul>
+          </nav>
+          <div class="role">
+            <label for="role">Role</label>
+            <select id="role" name="role" autocomplete="off">
+              <option value="host">host</option>
+              <option value="student">student</option>
+              <option value="poradatel">pořadatel</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main id="obsah" class="obal">
+    <h1>Moje akce</h1>
+
+    <div class="zprava" id="jen-student" hidden>
+      <p>Tato stránka je určená pro roli student. Přepněte roli v záhlaví stránky.</p>
+      <p><a class="tlacitko" href="akce.html">Přejít do katalogu akcí</a></p>
+    </div>
+
+    <div id="moje-obsah">
+      <p id="stav" role="status" hidden></p>
+
+      <ul class="seznam-akci" id="seznam"></ul>
+
+      <div class="prazdny-stav" id="prazdno" hidden>
+        <p>Zatím nejste přihlášeni na žádnou akci.</p>
+        <a class="tlacitko" href="akce.html">Najít akci v katalogu</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="paticka">
+    <div class="obal paticka-obsah">
+      <p><a href="o-projektu.html">O projektu</a></p>
+      <p>Školní projekt, skupina č. 5. Akce na webu jsou ukázková data.</p>
+    </div>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>O projektu | ČZU Events</title>
+  <meta name="description" content="ČZU Events je školní projekt: portál, kde studenti najdou akce v areálu ČZU na jednom místě a přihlásí se na ně.">
+  <link rel="icon" href="img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/role.js"></script>
+  <script src="js/data.js" defer></script>
+  <script src="js/app.js" defer></script>
+</head>
+<body data-koren="">
+  <a class="preskocit" href="#obsah">Přeskočit na obsah</a>
+
+  <header>
+    <p class="projekt-lista">Studentský projekt na PEF ČZU. Nejde o oficiální web univerzity.</p>
+
+    <div class="zahlavi">
+      <div class="obal zahlavi-obsah">
+        <a class="logo" href="index.html" aria-label="ČZU Events">
+          <span class="logo-znak"><img src="img/czu-logo.png" alt="" width="447" height="447"></span>
+          <span>Events</span>
+        </a>
+        <button type="button" class="menu-tlacitko" id="menu-tlacitko" aria-expanded="false" aria-controls="menu">
+          <span aria-hidden="true">☰</span>
+          <span class="skryte-vizualne">Menu</span>
+        </button>
+        <div class="menu" id="menu">
+          <nav class="navigace" aria-label="Hlavní navigace">
+            <ul>
+              <li data-role="student"><a href="moje-akce.html">Moje akce</a></li>
+              <li><a href="akce.html">Akce</a></li>
+              <li data-role="poradatel"><a href="poradatel.html">Pro pořadatele</a></li>
+            </ul>
+          </nav>
+          <div class="role">
+            <label for="role">Role</label>
+            <select id="role" name="role" autocomplete="off">
+              <option value="host">host</option>
+              <option value="student">student</option>
+              <option value="poradatel">pořadatel</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main id="obsah" class="obal">
+    <h1>O projektu ČZU Events</h1>
+
+    <p>ČZU Events je responzivní webový portál, na kterém studenti najdou akce v areálu ČZU na jednom místě, přihlásí se na ně a pořadatelé je mohou snadno zveřejnit.</p>
+
+    <h2>Proč portál vznikl</h2>
+    <p>Informace o přednáškách, workshopech, kariérních, sportovních a spolkových akcích jsou rozptýlené mezi weby fakult, sociální sítě spolků, e-maily a nástěnky. Student, zvlášť v kombinovaném studiu, tak snadno přehlédne akci, která by ho zajímala.</p>
+
+    <h2>Co portál umí</h2>
+    <ul>
+      <li>Katalog akcí s filtry podle kategorie, fakulty, termínu a volných míst.</li>
+      <li>Detail akce s termínem, místem konání, mapou a obsazeností.</li>
+      <li>Přihlášení a odhlášení studenta s kontrolou kapacity.</li>
+      <li>Přehled Moje akce.</li>
+      <li>Formulář pořadatele pro vytvoření a úpravu akce.</li>
+    </ul>
+
+    <h2>Prototyp a ukázková data</h2>
+    <p>Web je prototyp. Akce v katalogu jsou ukázková data a slouží jen k předvedení funkcí. Role host, student a pořadatel se přepínají v záhlaví, skutečné přihlašování uživatelů prototyp nemá. Přihlášení na akce a akce vytvořené pořadatelem se ukládají jen v prohlížeči, ve kterém vznikly.</p>
+
+    <h2>Použité technologie</h2>
+    <p>HTML5, vlastní CSS a JavaScript bez frameworku. Data akcí se načítají přes Fetch API ze souboru JSON, připravený je i skript v PHP se stejným výstupem. Mapu zobrazuje knihovna Leaflet nad mapovými podklady <a href="https://www.openstreetmap.org/copyright">© přispěvatelé OpenStreetMap</a>.</p>
+
+    <h2>Kontakt</h2>
+    <p>Projekt vytvořila skupina č. 5 v předmětu Internetové technologie – client side (ETE89E) na Provozně ekonomické fakultě České zemědělské univerzity v Praze, zimní semestr 2026/2027.</p>
+  </main>
+
+  <footer class="paticka">
+    <div class="obal paticka-obsah">
+      <p><a href="o-projektu.html">O projektu</a></p>
+      <p>Školní projekt, skupina č. 5. Akce na webu jsou ukázková data.</p>
+    </div>
+  </footer>
+</body>
+</html>

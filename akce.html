@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Program akcí ČZU – filtrujte podle fakulty a termínu | ČZU Events</title>
+  <meta name="description" content="Přehled a kalendář akcí na ČZU. Filtrujte podle kategorie, fakulty a termínu a zobrazte jen akce s volnými místy.">
+  <link rel="icon" href="img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/role.js"></script>
+  <script src="js/data.js" defer></script>
+  <script src="js/app.js" defer></script>
+  <script src="js/katalog.js" defer></script>
+</head>
+<body data-koren="">
+  <a class="preskocit" href="#obsah">Přeskočit na obsah</a>
+
+  <header>
+    <p class="projekt-lista">Studentský projekt na PEF ČZU. Nejde o oficiální web univerzity.</p>
+
+    <div class="zahlavi">
+      <div class="obal zahlavi-obsah">
+        <a class="logo" href="index.html" aria-label="ČZU Events">
+          <span class="logo-znak"><img src="img/czu-logo.png" alt="" width="447" height="447"></span>
+          <span>Events</span>
+        </a>
+        <button type="button" class="menu-tlacitko" id="menu-tlacitko" aria-expanded="false" aria-controls="menu">
+          <span aria-hidden="true">☰</span>
+          <span class="skryte-vizualne">Menu</span>
+        </button>
+        <div class="menu" id="menu">
+          <nav class="navigace" aria-label="Hlavní navigace">
+            <ul>
+              <li data-role="student"><a href="moje-akce.html">Moje akce</a></li>
+              <li><a href="akce.html" aria-current="page">Akce</a></li>
+              <li data-role="poradatel"><a href="poradatel.html">Pro pořadatele</a></li>
+            </ul>
+          </nav>
+          <div class="role">
+            <label for="role">Role</label>
+            <select id="role" name="role" autocomplete="off">
+              <option value="host">host</option>
+              <option value="student">student</option>
+              <option value="poradatel">pořadatel</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main id="obsah" class="obal">
+    <h1>Akce na ČZU</h1>
+
+    <div class="katalog-ovladani">
+      <div class="hledani" role="search">
+        <label class="skryte-vizualne" for="hledat">Hledat akci</label>
+        <input type="search" id="hledat" placeholder="Hledat akci…" autocomplete="off">
+      </div>
+
+      <div class="rychle-filtry" id="rychle-filtry" aria-label="Rychlé filtry" role="group" hidden>
+        <button class="tlacitko" type="button" data-rychly-termin="dnes" aria-pressed="false">Dnes</button>
+        <button class="tlacitko" type="button" data-rychly-termin="tyden" aria-pressed="false">Tento týden</button>
+        <button class="tlacitko" type="button" id="rychle-volna" aria-pressed="false">Jen volná místa</button>
+        <details id="moje-fakulta-volba">
+          <summary class="tlacitko">Moje fakulta</summary>
+          <div class="moje-fakulta-panel">
+            <label for="moje-fakulta">Vyberte svou fakultu</label>
+            <select id="moje-fakulta"></select>
+            <button class="tlacitko" type="button" id="pouzit-fakultu">Použít</button>
+            <p class="napoveda">Výběr si zapamatujeme pro příště.</p>
+          </div>
+        </details>
+        <button type="button" class="tlacitko filtry-tlacitko" id="filtry-tlacitko" aria-expanded="false" aria-controls="filtry">Další filtry</button>
+      </div>
+
+      <div class="filtry" id="filtry">
+        <div class="filtr">
+          <label for="kategorie">Kategorie</label>
+          <select id="kategorie" autocomplete="off">
+            <option value="">Všechny kategorie</option>
+            <option value="Přednášky a semináře">Přednášky a semináře</option>
+            <option value="Workshopy">Workshopy</option>
+            <option value="Kariéra a veletrhy">Kariéra a veletrhy</option>
+            <option value="Sport">Sport</option>
+            <option value="Kultura a spolky">Kultura a spolky</option>
+            <option value="Pro uchazeče">Pro uchazeče</option>
+          </select>
+        </div>
+        <div class="filtr">
+          <label for="fakulta">Fakulta</label>
+          <select id="fakulta" autocomplete="off">
+            <option value="">Všechny fakulty</option>
+            <option value="PEF">PEF</option>
+            <option value="FAPPZ">FAPPZ</option>
+            <option value="FŽP">FŽP</option>
+            <option value="FLD">FLD</option>
+            <option value="FTZ">FTZ</option>
+            <option value="TF">TF</option>
+            <option value="celouniverzitní">celouniverzitní</option>
+          </select>
+        </div>
+        <div class="filtr">
+          <label for="termin">Termín</label>
+          <select id="termin" autocomplete="off">
+            <option value="">Kdykoli</option>
+            <option value="dnes">Dnes</option>
+            <option value="tyden">Tento týden</option>
+            <option value="mesic">Tento měsíc</option>
+            <option value="rozsah">Vlastní rozsah</option>
+          </select>
+        </div>
+        <div class="rozsah" id="rozsah" hidden>
+          <div class="filtr">
+            <label for="od">Od</label>
+            <input type="date" id="od" aria-describedby="rozsah-chyba">
+          </div>
+          <div class="filtr">
+            <label for="do">Do</label>
+            <input type="date" id="do" aria-describedby="rozsah-chyba">
+          </div>
+        </div>
+        <p id="rozsah-chyba" class="zprava zprava-chyba" role="alert" hidden>Datum „Do“ musí být stejné nebo pozdější než datum „Od“.</p>
+        <!-- Stav filtru drží toto pole; ovládá ho rychlé tlačítko „Jen volná místa“. -->
+        <div class="filtr filtr-zaskrtnuti" hidden>
+          <input type="checkbox" id="volna">
+          <label for="volna">Jen volná místa</label>
+        </div>
+        <button type="button" class="tlacitko filtry-zrusit" id="zrusit" hidden>Zrušit filtry</button>
+      </div>
+    </div>
+
+    <div class="aktivni-filtry" id="aktivni-filtry" role="group" aria-label="Použité filtry" hidden></div>
+
+    <div class="zobrazeni-akci" id="zobrazeni-akci" role="group" aria-label="Zobrazení akcí" hidden>
+      <button class="tlacitko" type="button" id="zobraz-seznam" aria-pressed="true" aria-controls="seznam">Seznam</button>
+      <button class="tlacitko" type="button" id="zobraz-kalendar" aria-pressed="false" aria-controls="kalendar">Kalendář</button>
+    </div>
+
+    <p class="pocet-vysledku" id="pocet" role="status">Načítám akce…</p>
+    <p id="chyba" role="alert" hidden></p>
+
+    <ul class="seznam-akci" id="seznam"></ul>
+
+    <section class="kalendar" id="kalendar" aria-label="Kalendář akcí" hidden>
+      <div class="kalendar-mesic-panel">
+        <div class="kalendar-navigace">
+          <button class="tlacitko" type="button" id="predchozi-mesic" aria-label="Předchozí měsíc">‹</button>
+          <h2 id="kalendar-mesic" aria-live="polite">Kalendář akcí</h2>
+          <button class="tlacitko" type="button" id="dalsi-mesic" aria-label="Další měsíc">›</button>
+        </div>
+        <table class="kalendar-mrizka" aria-labelledby="kalendar-mesic">
+          <thead>
+            <tr>
+              <th scope="col" abbr="Pondělí">Po</th>
+              <th scope="col" abbr="Úterý">Út</th>
+              <th scope="col" abbr="Středa">St</th>
+              <th scope="col" abbr="Čtvrtek">Čt</th>
+              <th scope="col" abbr="Pátek">Pá</th>
+              <th scope="col" abbr="Sobota">So</th>
+              <th scope="col" abbr="Neděle">Ne</th>
+            </tr>
+          </thead>
+          <tbody id="kalendar-dny"></tbody>
+        </table>
+        <p class="kalendar-legenda"><span class="kalendar-tecka" aria-hidden="true"></span> Den s akcí</p>
+      </div>
+      <div class="kalendar-agenda">
+        <h2 id="program-nadpis">Program měsíce</h2>
+        <button class="tlacitko" type="button" id="program-vse" hidden>Zobrazit celý měsíc</button>
+        <div id="kalendar-program"></div>
+      </div>
+    </section>
+
+    <div class="prazdny-stav" id="prazdno" hidden>
+      <p>Zadání neodpovídá žádná akce.</p>
+      <button type="button" class="tlacitko" id="prazdno-zrusit">Zrušit filtry</button>
+    </div>
+
+    <noscript>
+      <p>Katalog akcí se načítá JavaScriptem. Ukázkové akce: <a href="akce/internetove-technologie-20-11-2026.html">Internetové technologie – client side</a>, <a href="akce/karierni-veletrh-czu-25-11-2026.html">Kariérní veletrh ČZU</a>, <a href="akce/den-otevrenych-dveri-czu-27-11-2026.html">Den otevřených dveří ČZU</a>.</p>
+    </noscript>
+  </main>
+
+  <footer class="paticka">
+    <div class="obal paticka-obsah">
+      <p><a href="o-projektu.html">O projektu</a></p>
+      <p>Školní projekt, skupina č. 5. Akce na webu jsou ukázková data.</p>
+    </div>
+  </footer>
+</body>
+</html>

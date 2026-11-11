@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pro pořadatele | ČZU Events</title>
+  <meta name="description" content="Vytvoření a úprava akce na ČZU a přehled vlastních akcí s počtem přihlášených.">
+  <link rel="icon" href="img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/role.js"></script>
+  <script src="js/data.js" defer></script>
+  <script src="js/app.js" defer></script>
+  <script src="js/poradatel.js" defer></script>
+</head>
+<body data-koren="">
+  <a class="preskocit" href="#obsah">Přeskočit na obsah</a>
+
+  <header>
+    <p class="projekt-lista">Studentský projekt na PEF ČZU. Nejde o oficiální web univerzity.</p>
+
+    <div class="zahlavi">
+      <div class="obal zahlavi-obsah">
+        <a class="logo" href="index.html" aria-label="ČZU Events">
+          <span class="logo-znak"><img src="img/czu-logo.png" alt="" width="447" height="447"></span>
+          <span>Events</span>
+        </a>
+        <button type="button" class="menu-tlacitko" id="menu-tlacitko" aria-expanded="false" aria-controls="menu">
+          <span aria-hidden="true">☰</span>
+          <span class="skryte-vizualne">Menu</span>
+        </button>
+        <div class="menu" id="menu">
+          <nav class="navigace" aria-label="Hlavní navigace">
+            <ul>
+              <li data-role="student"><a href="moje-akce.html">Moje akce</a></li>
+              <li><a href="akce.html">Akce</a></li>
+              <li data-role="poradatel"><a href="poradatel.html" aria-current="page">Pro pořadatele</a></li>
+            </ul>
+          </nav>
+          <div class="role">
+            <label for="role">Role</label>
+            <select id="role" name="role" autocomplete="off">
+              <option value="host">host</option>
+              <option value="student">student</option>
+              <option value="poradatel">pořadatel</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main id="obsah" class="obal">
+    <h1>Pro pořadatele</h1>
+
+    <div class="zprava" id="jen-poradatel" hidden>
+      <p>Tato stránka je určená pro roli pořadatel. Přepněte roli v záhlaví stránky.</p>
+      <p><a class="tlacitko" href="akce.html">Přejít do katalogu akcí</a></p>
+    </div>
+
+    <div id="poradatel-obsah">
+      <p id="stav" role="status" hidden></p>
+
+      <form class="formular" id="formular" novalidate>
+        <h2 id="formular-nadpis">Nová akce</h2>
+        <p class="napoveda">Všechna pole jsou povinná.</p>
+
+        <div class="zprava zprava-chyba" id="chyby" role="alert" hidden></div>
+
+        <input type="hidden" id="akce-id" value="">
+
+        <div class="pole">
+          <label for="nazev">Název akce</label>
+          <input type="text" id="nazev" name="nazev" maxlength="100" required autocomplete="off">
+        </div>
+
+        <div class="formular-rada">
+          <div class="pole">
+            <label for="kategorie">Kategorie</label>
+            <select id="kategorie" name="kategorie" required>
+              <option value="">Vyberte kategorii</option>
+              <option value="Přednášky a semináře">Přednášky a semináře</option>
+              <option value="Workshopy">Workshopy</option>
+              <option value="Kariéra a veletrhy">Kariéra a veletrhy</option>
+              <option value="Sport">Sport</option>
+              <option value="Kultura a spolky">Kultura a spolky</option>
+              <option value="Pro uchazeče">Pro uchazeče</option>
+            </select>
+          </div>
+          <div class="pole">
+            <label for="fakulta">Fakulta</label>
+            <select id="fakulta" name="fakulta" required>
+              <option value="">Vyberte fakultu</option>
+              <option value="PEF">PEF</option>
+              <option value="FAPPZ">FAPPZ</option>
+              <option value="FŽP">FŽP</option>
+              <option value="FLD">FLD</option>
+              <option value="FTZ">FTZ</option>
+              <option value="TF">TF</option>
+              <option value="celouniverzitní">celouniverzitní</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="formular-rada">
+          <div class="pole">
+            <label for="datum">Datum</label>
+            <input type="date" id="datum" name="datum" required>
+          </div>
+          <div class="pole">
+            <label for="cas">Čas začátku</label>
+            <input type="time" id="cas" name="cas" required>
+          </div>
+        </div>
+
+        <div class="formular-rada">
+          <div class="pole">
+            <label for="misto">Místo konání</label>
+            <input type="text" id="misto" name="misto" maxlength="80" required autocomplete="off" aria-describedby="misto-napoveda">
+            <span class="napoveda" id="misto-napoveda">Například „PEF, EI“.</span>
+          </div>
+          <div class="pole">
+            <label for="kapacita">Kapacita</label>
+            <input type="number" id="kapacita" name="kapacita" min="1" max="5000" step="1" inputmode="numeric" required>
+          </div>
+        </div>
+
+        <div class="pole">
+          <label for="popis">Popis akce</label>
+          <textarea id="popis" name="popis" maxlength="1000" required aria-describedby="popis-napoveda"></textarea>
+          <span class="napoveda" id="popis-napoveda">Co se bude dít, pro koho akce je a co si vzít s sebou.</span>
+        </div>
+
+        <div class="formular-tlacitka">
+          <button type="submit" class="tlacitko tlacitko-plne" id="odeslat">Vytvořit akci</button>
+          <button type="button" class="tlacitko" id="zrusit-upravu" hidden>Zrušit úpravu</button>
+        </div>
+      </form>
+
+      <section aria-labelledby="vlastni-nadpis">
+        <h2 id="vlastni-nadpis">Vaše akce</h2>
+
+        <p id="prazdno" hidden>Zatím jste nevytvořili žádnou akci.</p>
+
+        <div class="tabulka-obal" id="tabulka-obal" hidden>
+          <table>
+            <caption class="skryte-vizualne">Akce vytvořené pořadatelem a počet přihlášených</caption>
+            <thead>
+              <tr>
+                <th scope="col">Název</th>
+                <th scope="col">Termín</th>
+                <th scope="col">Místo</th>
+                <th scope="col">Přihlášeno</th>
+                <th scope="col">Úprava</th>
+              </tr>
+            </thead>
+            <tbody id="tabulka-telo"></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="paticka">
+    <div class="obal paticka-obsah">
+      <p><a href="o-projektu.html">O projektu</a></p>
+      <p>Školní projekt, skupina č. 5. Akce na webu jsou ukázková data.</p>
+    </div>
+  </footer>
+</body>
+</html>

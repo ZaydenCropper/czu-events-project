@@ -1,0 +1,8 @@
+# ČZU Events – pravidla pro vyhledávače.
+# Vyhledávače čtou robots.txt jen z kořene domény. V podsložce skupiny
+# na serveru KitLab proto tento soubor není účinný; je připravený
+# pro nasazení na vlastní doménu.
+User-agent: *
+Allow: /
+
+Sitemap: https://ete89e.pef.czu.cz/zs2627/05/sitemap.xml
