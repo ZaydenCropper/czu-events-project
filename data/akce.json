@@ -161,5 +161,37 @@
     "poradatel": "FŽP ČZU",
     "obrazek": "img/prednasky.svg",
     "alt": "Ilustrace přednášky: řečník u plátna"
+  },
+  {
+    "id": "dead-poets-society-12-11-2026",
+    "nazev": "Dead Poets Society",
+    "kategorie": "Přednášky a semináře",
+    "fakulta": "PEF",
+    "zacatek": "2026-11-12T18:00:00+01:00",
+    "misto": "PEF – učebna bude upřesněna",
+    "lat": 50.13,
+    "lng": 14.374,
+    "kapacita": 30,
+    "obsazeno": 0,
+    "popis": "Ukázková přednáška o literatuře a poezii inspirovaná filmem Dead Poets Society. Tématem je vztah literatury, vzdělávání a osobního vyjádření. Jde o demonstrační akci pro testování webu.",
+    "poradatel": "Studentský literární klub (ukázka)",
+    "obrazek": "img/prednasky.svg",
+    "alt": "Ilustrace přednášky: řečník u plátna"
+  },
+  {
+    "id": "padel-pratelska-hra-14-11-2026",
+    "nazev": "Padel – přátelská hra",
+    "kategorie": "Sport",
+    "fakulta": "celouniverzitní",
+    "zacatek": "2026-11-14T15:00:00+01:00",
+    "misto": "Místo bude upřesněno",
+    "lat": 50.13,
+    "lng": 14.374,
+    "kapacita": 8,
+    "obsazeno": 0,
+    "popis": "Ukázková přátelská hra v padelu pro studenty všech fakult. Určeno začátečníkům i zkušenějším hráčům. Jde o demonstrační akci pro testování webu; kurt a vybavení budou upřesněny.",
+    "poradatel": "Studentská sportovní skupina (ukázka)",
+    "obrazek": "img/sport.svg",
+    "alt": "Ilustrace sportovní akce: míč a pohár"
   }
 ]
