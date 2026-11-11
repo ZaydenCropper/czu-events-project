@@ -77,6 +77,10 @@ document.addEventListener('DOMContentLoaded', function () {
       const tyden = tentoTyden();
       return den >= tyden.od && den <= tyden.do;
     }
+    if (termin.value === 'pristi-tyden') {
+      const tyden = tentoTyden();
+      return den >= posunDen(tyden.od, 7) && den <= posunDen(tyden.do, 7);
+    }
     if (termin.value === 'mesic') {
       return den.slice(0, 7) === dnes.slice(0, 7);
     }
