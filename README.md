@@ -1,0 +1,1 @@
+# czu-events-project
