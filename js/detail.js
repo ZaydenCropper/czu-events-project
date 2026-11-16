@@ -9,8 +9,9 @@ document.addEventListener('DOMContentLoaded', function () {
   const LEAFLET_CSS = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
   const LEAFLET_JS = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
   const DLAZDICE = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+  const t = CZUJazyk.t;
   const ATRIBUCE =
-    '&copy; <a href="https://www.openstreetmap.org/copyright">přispěvatelé OpenStreetMap</a>';
+    '&copy; <a href="https://www.openstreetmap.org/copyright">' + t('přispěvatelé OpenStreetMap') + '</a>';
 
   const telo = document.body;
   const jeSablona = telo.dataset.sablona === 'ano';
@@ -29,39 +30,42 @@ document.addEventListener('DOMContentLoaded', function () {
   function textZbyva(akce) {
     const volno = Math.max(akce.kapacita - akce.obsazeno, 0);
     if (volno === 0) {
-      return 'Všechna místa jsou obsazená';
+      return t('Všechna místa jsou obsazená');
     }
     if (volno === 1) {
-      return 'Zbývá 1 místo';
+      return t('Zbývá 1 místo');
     }
     if (volno >= 2 && volno <= 4) {
-      return 'Zbývají ' + volno + ' místa';
+      return t('Zbývají {volno} místa', { volno: volno });
     }
-    return 'Zbývá ' + volno + ' míst';
+    return t('Zbývá {volno} míst', { volno: volno });
   }
 
-  /* Doplní obsah šablony detail.html z dat akce. */
+  /* Doplní obsah šablony detail.html z dat akce. V angličtině se takto
+     přepíše i statická stránka, protože její HTML obsahuje české texty. */
   function vyplnSablonu(akce) {
     const datum = CZUData.formatDatum(akce.zacatek);
     const cas = CZUData.formatCas(akce.zacatek);
 
-    document.title = akce.nazev + ' – ' + akce.fakulta + ' ČZU, ' + datum;
+    document.title = CZUJazyk.jazyk === 'en'
+      ? akce.nazev + ' – ' + datum + ' | ČZU Events'
+      : akce.nazev + ' – ' + akce.fakulta + ' ČZU, ' + datum;
     const popisStranky = document.querySelector('meta[name="description"]');
     if (popisStranky) {
       popisStranky.setAttribute('content', akce.popis.slice(0, 155));
     }
 
     document.getElementById('akce-nazev').textContent = akce.nazev;
-    document.getElementById('akce-drobecky-kategorie').textContent = akce.kategorie;
+    document.getElementById('akce-drobecky-kategorie').textContent = t(akce.kategorie);
     document.getElementById('akce-drobecky-nazev').textContent = akce.nazev;
     document.getElementById('akce-kdy').textContent = datum + ' · ' + cas;
     document.getElementById('akce-kde').textContent = akce.misto;
-    document.getElementById('akce-poradatel').textContent = akce.poradatel;
+    document.getElementById('akce-poradatel').textContent = t(akce.poradatel);
     document.getElementById('akce-popis').textContent = akce.popis;
 
     const obrazek = document.getElementById('akce-obrazek');
     obrazek.src = CZUData.koren() + akce.obrazek;
-    obrazek.alt = akce.alt;
+    obrazek.alt = t(akce.alt);
   }
 
   /* iCalendar používá UTC, CRLF a skládání dlouhých řádků po 75 bajtech. */
@@ -84,7 +88,7 @@ document.addEventListener('DOMContentLoaded', function () {
       'DTSTART:' + datum(akce.zacatek),
       'SUMMARY:' + text(akce.nazev),
       'LOCATION:' + text(akce.misto),
-      'DESCRIPTION:' + text(akce.popis + '\nPořádá: ' + akce.poradatel),
+      'DESCRIPTION:' + text(akce.popis + '\n' + t('Pořádá: {poradatel}', { poradatel: t(akce.poradatel) })),
       'URL:' + new URL(CZUData.odkazNaDetail(akce), window.location.href).href,
       'END:VEVENT',
       'END:VCALENDAR'
@@ -105,7 +109,7 @@ document.addEventListener('DOMContentLoaded', function () {
       return vysledek;
     }).join('\r\n') + '\r\n';
     const soubor = new Blob([obsah], { type: 'text/calendar;charset=utf-8' });
-    const odkaz = CZUApp.prvek('a', 'tlacitko', 'Přidat do kalendáře');
+    const odkaz = CZUApp.prvek('a', 'tlacitko', t('Přidat do kalendáře'));
     odkaz.href = URL.createObjectURL(soubor);
     odkaz.download = akce.id.replace(/[^a-z0-9-]/gi, '-') + '.ics';
     const radek = CZUApp.prvek('p', 'detail-kalendar');
@@ -119,7 +123,7 @@ document.addEventListener('DOMContentLoaded', function () {
     obsazenostUkazatel.value = Math.min(akce.obsazeno, akce.kapacita);
     obsazenostUkazatel.setAttribute(
       'aria-label',
-      'Obsazenost: ' + akce.obsazeno + ' z ' + akce.kapacita + ' míst'
+      t('Obsazenost: {obsazeno} z {kapacita} míst', { obsazeno: akce.obsazeno, kapacita: akce.kapacita })
     );
     zbyva.textContent = textZbyva(akce);
   }
@@ -133,26 +137,23 @@ document.addEventListener('DOMContentLoaded', function () {
     tlacitko.hidden = false;
     tlacitko.disabled = false;
     tlacitko.dataset.akce = 'prihlasit';
-    tlacitko.textContent = 'Přihlásit se';
+    tlacitko.textContent = t('Přihlásit se');
     poznamka.textContent = '';
 
     if (CZUData.probehla(akce)) {
       tlacitko.disabled = true;
-      tlacitko.textContent = 'Akce už proběhla';
-    } else if (role === 'student' && prihlasen) {
+      tlacitko.textContent = t('Akce už proběhla');
+    } else if (CZUData.muzeSePrihlasit() && prihlasen) {
       tlacitko.dataset.akce = 'odhlasit';
-      tlacitko.textContent = 'Odhlásit se';
-      poznamka.textContent = 'Na tuto akci jste přihlášeni.';
+      tlacitko.textContent = t('Odhlásit se');
+      poznamka.textContent = t('Na tuto akci jste přihlášeni.');
     } else if (plno) {
       tlacitko.disabled = true;
-      tlacitko.textContent = 'Obsazeno';
-      poznamka.textContent = 'Kapacita akce je naplněna.';
+      tlacitko.textContent = t('Obsazeno');
+      poznamka.textContent = t('Kapacita akce je naplněna.');
     } else if (role === 'host') {
       tlacitko.disabled = true;
-      poznamka.textContent = 'Pro přihlášení přepněte roli na student.';
-    } else if (role === 'poradatel') {
-      tlacitko.disabled = true;
-      poznamka.textContent = 'Pořadatel se na akce nepřihlašuje. Přepněte roli na student.';
+      poznamka.textContent = t('Pro přihlášení přepněte roli na student nebo pořadatel.');
     }
 
     poznamka.hidden = poznamka.textContent === '';
@@ -164,7 +165,7 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   const DUVODY = {
-    role: 'Přihlásit se může jen student. Přepněte roli v záhlaví.',
+    role: 'Přihlásit se může student nebo pořadatel. Přepněte roli v záhlaví.',
     nenalezeno: 'Akce nebyla nalezena.',
     probehla: 'Akce už proběhla.',
     plno: 'Kapacita akce je naplněna.',
@@ -179,7 +180,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const akce = await CZUData.najdiAkci(idAkce);
 
     if (akce === null) {
-      CZUApp.zprava(stav, DUVODY.nenalezeno, 'chyba');
+      CZUApp.zprava(stav, t(DUVODY.nenalezeno), 'chyba');
       return;
     }
     vykresliStav(akce);
@@ -187,11 +188,11 @@ document.addEventListener('DOMContentLoaded', function () {
     if (vysledek.ok) {
       CZUApp.zprava(
         stav,
-        odhlasuje ? 'Odhlášení proběhlo.' : 'Přihlášení proběhlo. Akci najdete v Moje akce.',
+        t(odhlasuje ? 'Odhlášení proběhlo.' : 'Přihlášení proběhlo. Akci najdete v Moje akce.'),
         'ok'
       );
     } else {
-      CZUApp.zprava(stav, DUVODY[vysledek.duvod] || 'Akci se nepodařilo dokončit.', 'chyba');
+      CZUApp.zprava(stav, t(DUVODY[vysledek.duvod] || 'Akci se nepodařilo dokončit.'), 'chyba');
     }
   }
 
@@ -199,7 +200,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   function nahradaMapy() {
     mapa.classList.add('mapa-nahrada');
-    mapa.textContent = 'Mapu se nepodařilo načíst. Polohu otevřete odkazem pod mapou.';
+    mapa.textContent = t('Mapu se nepodařilo načíst. Polohu otevřete odkazem pod mapou.');
   }
 
   function vykresliMapu(akce) {
@@ -225,7 +226,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const text = akce.presnaPoloha === true
       ? akce.misto
-      : 'Přibližná poloha kampusu ČZU. Místo konání: ' + akce.misto;
+      : t('Přibližná poloha kampusu ČZU. Místo konání: {misto}', { misto: akce.misto });
     const popisek = CZUApp.prvek('span', '', text);
     window.L.circleMarker(poloha, {
       radius: 10,
@@ -240,13 +241,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
   /* Knihovna Leaflet se načítá až na detailu, ostatní stránky ji nestahují. */
   function nactiMapu(akce) {
-    const odkaz = CZUApp.prvek('a', '', 'Otevřít v OpenStreetMap');
+    const odkaz = CZUApp.prvek('a', '', t('Otevřít v OpenStreetMap'));
     const poloha = new URL('https://www.openstreetmap.org/');
     poloha.search = new URLSearchParams({ mlat: akce.lat, mlon: akce.lng }).toString();
     poloha.hash = 'map=17/' + akce.lat + '/' + akce.lng;
     odkaz.href = poloha.href;
     const popisMapy = CZUApp.prvek(
-      'p', 'mapa-popis', akce.presnaPoloha === true ? '' : 'Přibližná poloha kampusu ČZU. '
+      'p', 'mapa-popis', akce.presnaPoloha === true ? '' : t('Přibližná poloha kampusu ČZU. ')
     );
     popisMapy.appendChild(odkaz);
     mapa.insertAdjacentElement('afterend', popisMapy);
@@ -270,32 +271,34 @@ document.addEventListener('DOMContentLoaded', function () {
   /* Stránka má stále jediný nadpis H1: jen se změní jeho text
      a místo obsahu akce se ukáže vysvětlení s odkazem do katalogu. */
   function ukazNenalezeno(text) {
-    document.title = 'Akce nebyla nalezena | ČZU Events';
-    document.getElementById('akce-nazev').textContent = 'Akce nebyla nalezena';
+    document.title = t('Akce nebyla nalezena | ČZU Events');
+    document.getElementById('akce-nazev').textContent = t('Akce nebyla nalezena');
     document.getElementById('nenalezeno-text').textContent = text;
     document.getElementById('detail-obsah').hidden = true;
     nenalezeno.hidden = false;
     clanek.hidden = false;
     document.body.classList.remove('ma-listu');
+    CZUJazyk.odkryj();
   }
 
   if (!idAkce) {
-    ukazNenalezeno('V adrese chybí označení akce.');
+    ukazNenalezeno(t('V adrese chybí označení akce.'));
     return;
   }
 
   CZUData.najdiAkci(idAkce)
     .then(function (akce) {
       if (akce === null) {
-        ukazNenalezeno(
+        ukazNenalezeno(t(
           'Tato akce v katalogu není. Akce vytvořené pořadatelem jsou vidět jen v prohlížeči, ve kterém vznikly.'
-        );
+        ));
         return;
       }
-      if (jeSablona) {
+      if (jeSablona || CZUJazyk.jazyk === 'en') {
         vyplnSablonu(akce);
       }
       clanek.hidden = false;
+      CZUJazyk.odkryj();
       vykresliStav(akce);
       pripravOsobniKalendar(akce);
       tlacitko.addEventListener('click', priKliknuti);
@@ -303,11 +306,12 @@ document.addEventListener('DOMContentLoaded', function () {
     })
     .catch(function (duvod) {
       if (jeSablona) {
-        ukazNenalezeno('Akci se nepodařilo načíst. Zkuste stránku obnovit. (' + duvod.message + ')');
+        ukazNenalezeno(t('Akci se nepodařilo načíst. Zkuste stránku obnovit. ({chyba})', { chyba: duvod.message }));
       } else {
         /* Statická stránka zůstane čitelná i bez dat, jen bez přihlášení. */
-        CZUApp.zprava(stav, 'Aktuální obsazenost se nepodařilo načíst. Zkuste stránku obnovit.', 'chyba');
+        CZUApp.zprava(stav, t('Aktuální obsazenost se nepodařilo načíst. Zkuste stránku obnovit.'), 'chyba');
         tlacitko.disabled = true;
+        CZUJazyk.odkryj();
       }
     });
 });

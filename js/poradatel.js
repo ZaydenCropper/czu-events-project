@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const telo = document.getElementById('tabulka-telo');
   const tabulka = document.getElementById('tabulka-obal');
   const prazdno = document.getElementById('prazdno');
+  const t = CZUJazyk.t;
 
   const pole = {
     id: document.getElementById('akce-id'),
@@ -36,8 +37,8 @@ document.addEventListener('DOMContentLoaded', function () {
   function vyprazdniFormular() {
     formular.reset();
     pole.id.value = '';
-    nadpisFormulare.textContent = 'Nová akce';
-    odeslat.textContent = 'Vytvořit akci';
+    nadpisFormulare.textContent = t('Nová akce');
+    odeslat.textContent = t('Vytvořit akci');
     zrusitUpravu.hidden = true;
     chyby.hidden = true;
     chyby.textContent = '';
@@ -54,8 +55,8 @@ document.addEventListener('DOMContentLoaded', function () {
     pole.misto.value = akce.misto;
     pole.kapacita.value = akce.kapacita;
     pole.popis.value = akce.popis;
-    nadpisFormulare.textContent = 'Úprava akce';
-    odeslat.textContent = 'Uložit změny';
+    nadpisFormulare.textContent = t('Úprava akce');
+    odeslat.textContent = t('Uložit změny');
     zrusitUpravu.hidden = false;
     CZUApp.zprava(stav, '', '');
     nadpisFormulare.scrollIntoView({ block: 'start' });
@@ -68,35 +69,35 @@ document.addEventListener('DOMContentLoaded', function () {
     const kapacita = Number(pole.kapacita.value);
 
     if (pole.nazev.value.trim().length < 3) {
-      nalezene.push({ pole: pole.nazev, text: 'Vyplňte název akce (alespoň 3 znaky).' });
+      nalezene.push({ pole: pole.nazev, text: t('Vyplňte název akce (alespoň 3 znaky).') });
     }
     if (!pole.kategorie.value) {
-      nalezene.push({ pole: pole.kategorie, text: 'Vyberte kategorii.' });
+      nalezene.push({ pole: pole.kategorie, text: t('Vyberte kategorii.') });
     }
     if (!pole.fakulta.value) {
-      nalezene.push({ pole: pole.fakulta, text: 'Vyberte fakultu.' });
+      nalezene.push({ pole: pole.fakulta, text: t('Vyberte fakultu.') });
     }
     if (!pole.datum.value) {
-      nalezene.push({ pole: pole.datum, text: 'Vyplňte datum akce.' });
+      nalezene.push({ pole: pole.datum, text: t('Vyplňte datum akce.') });
     } else if (pole.datum.value < CZUData.dnes()) {
-      nalezene.push({ pole: pole.datum, text: 'Datum akce nesmí být v minulosti.' });
+      nalezene.push({ pole: pole.datum, text: t('Datum akce nesmí být v minulosti.') });
     }
     if (!pole.cas.value) {
-      nalezene.push({ pole: pole.cas, text: 'Vyplňte čas začátku.' });
+      nalezene.push({ pole: pole.cas, text: t('Vyplňte čas začátku.') });
     }
     if (pole.misto.value.trim().length < 2) {
-      nalezene.push({ pole: pole.misto, text: 'Vyplňte místo konání.' });
+      nalezene.push({ pole: pole.misto, text: t('Vyplňte místo konání.') });
     }
     if (!Number.isInteger(kapacita) || kapacita < 1 || kapacita > 5000) {
-      nalezene.push({ pole: pole.kapacita, text: 'Kapacita musí být celé číslo od 1 do 5000.' });
+      nalezene.push({ pole: pole.kapacita, text: t('Kapacita musí být celé číslo od 1 do 5000.') });
     } else if (kapacita < prihlasenoTed) {
       nalezene.push({
         pole: pole.kapacita,
-        text: 'Kapacita nesmí být nižší než počet přihlášených (' + prihlasenoTed + ').'
+        text: t('Kapacita nesmí být nižší než počet přihlášených ({pocet}).', { pocet: prihlasenoTed })
       });
     }
     if (pole.popis.value.trim().length < 10) {
-      nalezene.push({ pole: pole.popis, text: 'Popište akci alespoň jednou větou (10 znaků).' });
+      nalezene.push({ pole: pole.popis, text: t('Popište akci alespoň jednou větou (10 znaků).') });
     }
     return nalezene;
   }
@@ -110,7 +111,7 @@ document.addEventListener('DOMContentLoaded', function () {
       chyby.hidden = true;
       return;
     }
-    chyby.appendChild(CZUApp.prvek('p', '', 'Formulář obsahuje chyby:'));
+    chyby.appendChild(CZUApp.prvek('p', '', t('Formulář obsahuje chyby:')));
     const seznam = document.createElement('ul');
     nalezene.forEach(function (chyba) {
       chyba.pole.setAttribute('aria-invalid', 'true');
@@ -142,12 +143,15 @@ document.addEventListener('DOMContentLoaded', function () {
           CZUApp.prvek('td', '', CZUData.formatDatum(akce.zacatek) + ' · ' + CZUData.formatCas(akce.zacatek))
         );
         radek.appendChild(CZUApp.prvek('td', '', akce.misto));
-        radek.appendChild(CZUApp.prvek('td', '', akce.obsazeno + ' z ' + akce.kapacita));
+        radek.appendChild(CZUApp.prvek('td', '', t('{obsazeno} z {kapacita}', {
+          obsazeno: akce.obsazeno,
+          kapacita: akce.kapacita
+        })));
 
         const bunka = document.createElement('td');
-        const upravit = CZUApp.prvek('button', 'tlacitko', 'Upravit');
+        const upravit = CZUApp.prvek('button', 'tlacitko', t('Upravit'));
         upravit.type = 'button';
-        upravit.appendChild(CZUApp.prvek('span', 'skryte-vizualne', ' akci ' + akce.nazev));
+        upravit.appendChild(CZUApp.prvek('span', 'skryte-vizualne', t(' akci {nazev}', { nazev: akce.nazev })));
         upravit.addEventListener('click', function () {
           nactiDoFormulare(akce);
         });
@@ -166,7 +170,7 @@ document.addEventListener('DOMContentLoaded', function () {
     udalost.preventDefault();
 
     const upravuje = pole.id.value !== '';
-    const prihlasenoTed = upravuje && CZUData.jePrihlasen(pole.id.value) ? 1 : 0;
+    const prihlasenoTed = upravuje ? CZUData.pocetPrihlasenych(pole.id.value) : 0;
     const nalezene = zkontroluj(prihlasenoTed);
     ukazChyby(nalezene);
     if (nalezene.length > 0) {
@@ -185,7 +189,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     if (ulozena === null) {
-      CZUApp.zprava(stav, 'Akci se nepodařilo uložit. Prohlížeč nepovolil úložiště.', 'chyba');
+      CZUApp.zprava(stav, t('Akci se nepodařilo uložit. Prohlížeč nepovolil úložiště.'), 'chyba');
       return;
     }
 
@@ -193,8 +197,8 @@ document.addEventListener('DOMContentLoaded', function () {
     vykresliTabulku().then(function () {
       CZUApp.zprava(
         stav,
-        (upravuje ? 'Změny akce „' : 'Akce „') + ulozena.nazev +
-          (upravuje ? '“ jsou uložené.' : '“ je vytvořená a najdete ji v katalogu.'),
+        t(upravuje ? 'Změny akce „{nazev}“ jsou uložené.' : 'Akce „{nazev}“ je vytvořená a najdete ji v katalogu.',
+          { nazev: ulozena.nazev }),
         'ok'
       );
       stav.scrollIntoView({ block: 'nearest' });
@@ -207,6 +211,6 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   vykresliTabulku().catch(function (duvod) {
-    CZUApp.zprava(stav, 'Akce se nepodařilo načíst. Zkuste stránku obnovit. (' + duvod.message + ')', 'chyba');
+    CZUApp.zprava(stav, CZUJazyk.t('Akce se nepodařilo načíst. Zkuste stránku obnovit. ({chyba})', { chyba: duvod.message }), 'chyba');
   });
 });

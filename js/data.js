@@ -14,7 +14,11 @@ const CZUData = (function () {
      proto mají naše klíče v LocalStorage vlastní předponu. */
   const PREDPONA = 'czu-events-05.';
   const KLIC_ROLE = PREDPONA + 'role';
+  /* Student a pořadatel jsou v prototypu dvě různé osoby,
+     proto má každý vlastní seznam přihlášených akcí. */
   const KLIC_PRIHLASENI = PREDPONA + 'prihlaseni';
+  const KLIC_PRIHLASENI_PORADATELE = PREDPONA + 'prihlaseni-poradatel';
+  const MOHOU_SE_PRIHLASIT = ['student', 'poradatel'];
   const KLIC_AKCE = PREDPONA + 'akce-poradatele';
 
   const ROLE = ['host', 'student', 'poradatel'];
@@ -106,7 +110,18 @@ const CZUData = (function () {
     return denAkce(akce.zacatek) < dnes();
   }
 
+  /* Anglický web píše datum jako „20 Nov 2026“, český jako „20. 11. 2026“. */
+  const anglickeDatum = new Intl.DateTimeFormat('en-GB', {
+    timeZone: CASOVE_PASMO,
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric'
+  });
+
   function formatDatum(zacatek) {
+    if (CZUJazyk.jazyk === 'en') {
+      return anglickeDatum.format(new Date(zacatek));
+    }
     const casti = castiData(new Date(zacatek));
     return Number(casti.day) + '. ' + Number(casti.month) + '. ' + casti.year;
   }
@@ -179,9 +194,17 @@ const CZUData = (function () {
       headers: { Accept: 'application/json' }
     });
     if (!odpoved.ok) {
-      throw new Error('Data akcí se nepodařilo načíst (HTTP ' + odpoved.status + ').');
+      throw new Error(CZUJazyk.t('Data akcí se nepodařilo načíst (HTTP {stav}).', { stav: odpoved.status }));
     }
-    mezipamet = await odpoved.json();
+    const data = await odpoved.json();
+    /* Ukázkové akce mají anglický název, místo, popis a další texty
+       v poli "en". V angličtině se jimi nahradí české hodnoty. */
+    mezipamet = data.map(function (akce) {
+      const preklad = CZUJazyk.jazyk === 'en' && akce.en ? akce.en : {};
+      const vysledek = Object.assign({}, akce, preklad);
+      delete vysledek.en;
+      return vysledek;
+    });
     return mezipamet;
   }
 
@@ -190,7 +213,8 @@ const CZUData = (function () {
   async function nactiAkce() {
     const ukazkove = await nactiUkazkoveAkce();
     const vlastni = ctiUloziste(KLIC_AKCE, []);
-    const prihlaseni = ctiUloziste(KLIC_PRIHLASENI, []);
+    const prihlaseniStudenta = ctiUloziste(KLIC_PRIHLASENI, []);
+    const prihlaseniPoradatele = ctiUloziste(KLIC_PRIHLASENI_PORADATELE, []);
 
     const vsechny = ukazkove
       .map(function (akce) {
@@ -204,7 +228,8 @@ const CZUData = (function () {
 
     return vsechny
       .map(function (akce) {
-        const navic = prihlaseni.indexOf(akce.id) === -1 ? 0 : 1;
+        const navic = (prihlaseniStudenta.indexOf(akce.id) === -1 ? 0 : 1) +
+          (prihlaseniPoradatele.indexOf(akce.id) === -1 ? 0 : 1);
         return Object.assign({}, akce, { obsazeno: akce.obsazeno + navic });
       })
       .sort(function (a, b) {
@@ -227,16 +252,40 @@ const CZUData = (function () {
     return koren() + 'detail.html?id=' + encodeURIComponent(akce.id);
   }
 
-  /* ---------- Přihlášení studenta ---------- */
+  /* ---------- Přihlášení studenta a pořadatele ---------- */
+
+  /* Klíč seznamu přihlášení pro aktuální roli; host se přihlásit nemůže. */
+  function klicPrihlaseni() {
+    const role = nactiRoli();
+    if (role === 'student') {
+      return KLIC_PRIHLASENI;
+    }
+    if (role === 'poradatel') {
+      return KLIC_PRIHLASENI_PORADATELE;
+    }
+    return null;
+  }
+
+  function muzeSePrihlasit() {
+    return MOHOU_SE_PRIHLASIT.indexOf(nactiRoli()) !== -1;
+  }
 
   function jePrihlasen(id) {
-    return ctiUloziste(KLIC_PRIHLASENI, []).indexOf(id) !== -1;
+    const klic = klicPrihlaseni();
+    return klic !== null && ctiUloziste(klic, []).indexOf(id) !== -1;
+  }
+
+  /* Kolik osob z tohoto prohlížeče (student a pořadatel) je na akci přihlášeno. */
+  function pocetPrihlasenych(id) {
+    return [KLIC_PRIHLASENI, KLIC_PRIHLASENI_PORADATELE].filter(function (klic) {
+      return ctiUloziste(klic, []).indexOf(id) !== -1;
+    }).length;
   }
 
   /* Vrací { ok: true } nebo { ok: false, duvod: '...' }.
      Důvody: role, nenalezeno, probehla, plno, uloziste. */
   async function prihlasit(id) {
-    if (nactiRoli() !== 'student') {
+    if (!muzeSePrihlasit()) {
       return { ok: false, duvod: 'role' };
     }
     if (jePrihlasen(id)) {
@@ -252,19 +301,24 @@ const CZUData = (function () {
     if (akce.obsazeno >= akce.kapacita) {
       return { ok: false, duvod: 'plno' };
     }
-    const prihlaseni = ctiUloziste(KLIC_PRIHLASENI, []);
+    const klic = klicPrihlaseni();
+    const prihlaseni = ctiUloziste(klic, []);
     prihlaseni.push(id);
-    if (!zapisUloziste(KLIC_PRIHLASENI, prihlaseni)) {
+    if (!zapisUloziste(klic, prihlaseni)) {
       return { ok: false, duvod: 'uloziste' };
     }
     return { ok: true };
   }
 
   function odhlasit(id) {
-    const prihlaseni = ctiUloziste(KLIC_PRIHLASENI, []).filter(function (polozka) {
+    const klic = klicPrihlaseni();
+    if (klic === null) {
+      return { ok: false, duvod: 'role' };
+    }
+    const prihlaseni = ctiUloziste(klic, []).filter(function (polozka) {
       return polozka !== id;
     });
-    if (!zapisUloziste(KLIC_PRIHLASENI, prihlaseni)) {
+    if (!zapisUloziste(klic, prihlaseni)) {
       return { ok: false, duvod: 'uloziste' };
     }
     return { ok: true };
@@ -337,6 +391,8 @@ const CZUData = (function () {
     najdiAkci: najdiAkci,
     odkazNaDetail: odkazNaDetail,
     jePrihlasen: jePrihlasen,
+    muzeSePrihlasit: muzeSePrihlasit,
+    pocetPrihlasenych: pocetPrihlasenych,
     prihlasit: prihlasit,
     odhlasit: odhlasit,
     nactiMojeAkce: nactiMojeAkce,

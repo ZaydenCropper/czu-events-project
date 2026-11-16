@@ -17,13 +17,15 @@ const CZUApp = (function () {
     return novy;
   }
 
-  const denVTydnu = new Intl.DateTimeFormat('cs-CZ', {
+  const t = CZUJazyk.t;
+
+  const denVTydnu = new Intl.DateTimeFormat(CZUJazyk.locale, {
     weekday: 'short',
     timeZone: 'Europe/Prague'
   });
 
   function textObsazenosti(akce) {
-    return 'Obsazeno ' + akce.obsazeno + '/' + akce.kapacita;
+    return t('Obsazeno {obsazeno}/{kapacita}', { obsazeno: akce.obsazeno, kapacita: akce.kapacita });
   }
 
   function ukazatelVolnychMist(akce) {
@@ -33,7 +35,7 @@ const CZUApp = (function () {
     ukazatel.value = volno;
     ukazatel.setAttribute(
       'aria-label',
-      'Volná místa: ' + volno + ' z ' + akce.kapacita
+      t('Volná místa: {volno} z {kapacita}', { volno: volno, kapacita: akce.kapacita })
     );
     return ukazatel;
   }
@@ -55,7 +57,7 @@ const CZUApp = (function () {
     /* Pořadí v kartě: malá značka kategorie, název jako hlavní prvek,
        datum a čas na vlastním řádku, místo a volná místa. */
     const kategorie = prvek('p', 'karta-kategorie');
-    kategorie.append(obrazek, prvek('span', 'stitek', akce.kategorie));
+    kategorie.append(obrazek, prvek('span', 'stitek', t(akce.kategorie)));
     karta.appendChild(kategorie);
 
     karta.appendChild(prvek('h' + uroven, 'karta-nazev', akce.nazev));
@@ -76,20 +78,20 @@ const CZUApp = (function () {
     const volno = Math.max(akce.kapacita - akce.obsazeno, 0);
     const obsazenost = prvek('p', 'karta-obsazenost');
     if (CZUData.probehla(akce)) {
-      obsazenost.textContent = 'Proběhlo';
+      obsazenost.textContent = t('Proběhlo');
       karta.classList.add('karta-plno');
     } else if (volno === 0) {
-      obsazenost.textContent = 'Obsazeno';
+      obsazenost.textContent = t('Obsazeno');
       karta.classList.add('karta-plno');
     } else {
       obsazenost.classList.add('karta-volno');
-      obsazenost.textContent = 'Volná místa: ' + volno + ' z ' + akce.kapacita;
+      obsazenost.textContent = t('Volná místa: {volno} z {kapacita}', { volno: volno, kapacita: akce.kapacita });
     }
     karta.appendChild(obsazenost);
     karta.appendChild(ukazatelVolnychMist(akce));
 
     const tlacitka = prvek('div', 'karta-akce');
-    const odkaz = prvek('a', 'karta-detail', 'Zobrazit detail');
+    const odkaz = prvek('a', 'karta-detail', t('Zobrazit detail'));
     odkaz.href = CZUData.odkazNaDetail(akce);
     odkaz.appendChild(prvek('span', 'skryte-vizualne', ': ' + akce.nazev));
     const sipka = prvek('span', '', '→');

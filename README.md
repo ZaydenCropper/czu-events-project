@@ -15,7 +15,8 @@ poradatel.html        Formulář a tabulka pořadatele
 o-projektu.html       Popis projektu a kontakt
 akce/                 Tři statické detaily kvůli SEO (JSON-LD, Open Graph)
 css/style.css         Všechny styly, od mobilu po počítač
-js/role.js            Nastaví roli před vykreslením stránky
+js/role.js            Nastaví roli a jazyk před vykreslením stránky
+js/jazyk.js           Přepínač CZ / EN, slovník a překlad stránky
 js/data.js            Datová vrstva: JSON nebo PHP, LocalStorage
 js/app.js             Přepínač role, mobilní menu, karta akce
 js/uvod.js            Úvodní stránka
@@ -83,6 +84,12 @@ Všechny ostatní odkazy jsou relativní a na adrese nezávisí.
 
 - **AJAX:** akce se načítají přes Fetch API v `js/data.js`, filtry překreslují
   seznam bez obnovení stránky.
+- **Jazyk CZ / EN:** přepínač v záhlaví ukládá volbu do LocalStorage
+  (`czu-events-05.jazyk`), takže platí na všech stránkách. Texty stránky
+  přeloží `js/jazyk.js` podle slovníku, texty ze skriptů se překládají
+  funkcí `CZUJazyk.t()`. Anglické texty ukázkových akcí jsou v
+  `data/akce.json` v poli `en`. Akce vytvořené pořadatelem zůstávají
+  v jazyce, ve kterém je pořadatel napsal.
 - **PHP:** v `js/data.js` změňte konstantu `ZDROJ_DAT` z `'data/akce.json'`
   na `'api/akce.php'`. Web pak bere data ze serverového skriptu.
 - **API třetích stran:** mapu na detailu kreslí knihovna Leaflet nad dlaždicemi

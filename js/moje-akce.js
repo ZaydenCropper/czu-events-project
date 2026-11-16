@@ -1,4 +1,4 @@
-/* ČZU Events – Moje akce: akce, na které je student přihlášený. */
+/* ČZU Events – Moje akce: akce, na které je přihlášený student nebo pořadatel. */
 
 'use strict';
 
@@ -8,8 +8,9 @@ document.addEventListener('DOMContentLoaded', function () {
   const seznam = document.getElementById('seznam');
   const prazdno = document.getElementById('prazdno');
   const stav = document.getElementById('stav');
+  const t = CZUJazyk.t;
 
-  if (CZUData.nactiRoli() !== 'student') {
+  if (!CZUData.muzeSePrihlasit()) {
     jenStudent.hidden = false;
     obsah.hidden = true;
     return;
@@ -19,17 +20,17 @@ document.addEventListener('DOMContentLoaded', function () {
     return CZUData.nactiMojeAkce().then(function (akce) {
       seznam.textContent = '';
       akce.forEach(function (polozka) {
-        const odhlasit = CZUApp.prvek('button', 'tlacitko tlacitko-sirka tlacitko-plne', 'Odhlásit se');
+        const odhlasit = CZUApp.prvek('button', 'tlacitko tlacitko-sirka tlacitko-plne', t('Odhlásit se'));
         odhlasit.type = 'button';
-        odhlasit.appendChild(CZUApp.prvek('span', 'skryte-vizualne', ' z akce ' + polozka.nazev));
+        odhlasit.appendChild(CZUApp.prvek('span', 'skryte-vizualne', t(' z akce {nazev}', { nazev: polozka.nazev })));
         odhlasit.addEventListener('click', function () {
           const vysledek = CZUData.odhlasit(polozka.id);
           if (vysledek.ok) {
             vykresli().then(function () {
-              CZUApp.zprava(stav, 'Odhlášení z akce „' + polozka.nazev + '“ proběhlo.', 'ok');
+              CZUApp.zprava(stav, t('Odhlášení z akce „{nazev}“ proběhlo.', { nazev: polozka.nazev }), 'ok');
             });
           } else {
-            CZUApp.zprava(stav, 'Odhlášení se nepodařilo uložit.', 'chyba');
+            CZUApp.zprava(stav, t('Odhlášení se nepodařilo uložit.'), 'chyba');
           }
         });
         seznam.appendChild(CZUApp.kartaAkce(polozka, 2, odhlasit));
@@ -39,6 +40,6 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   vykresli().catch(function (duvod) {
-    CZUApp.zprava(stav, 'Akce se nepodařilo načíst. Zkuste stránku obnovit. (' + duvod.message + ')', 'chyba');
+    CZUApp.zprava(stav, CZUJazyk.t('Akce se nepodařilo načíst. Zkuste stránku obnovit. ({chyba})', { chyba: duvod.message }), 'chyba');
   });
 });

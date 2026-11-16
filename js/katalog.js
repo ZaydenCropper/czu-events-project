@@ -28,8 +28,9 @@ document.addEventListener('DOMContentLoaded', function () {
   const nadpisMesice = document.getElementById('kalendar-mesic');
   const dnyKalendare = document.getElementById('kalendar-dny');
   const program = document.getElementById('kalendar-program');
-  const formatMesice = new Intl.DateTimeFormat('cs-CZ', { month: 'long', year: 'numeric', timeZone: 'UTC' });
-  const formatDne = new Intl.DateTimeFormat('cs-CZ', { dateStyle: 'full', timeZone: 'UTC' });
+  const t = CZUJazyk.t;
+  const formatMesice = new Intl.DateTimeFormat(CZUJazyk.locale, { month: 'long', year: 'numeric', timeZone: 'UTC' });
+  const formatDne = new Intl.DateTimeFormat(CZUJazyk.locale, { dateStyle: 'full', timeZone: 'UTC' });
   const rychleFiltry = document.getElementById('rychle-filtry');
   const rychleVolna = document.getElementById('rychle-volna');
   const mojeFakulta = document.getElementById('moje-fakulta');
@@ -114,7 +115,8 @@ document.addEventListener('DOMContentLoaded', function () {
       }
       if (dotaz) {
         const text = zjednodus(
-          [akce.nazev, akce.popis, akce.misto, akce.kategorie, akce.fakulta].join(' ')
+          [akce.nazev, akce.popis, akce.misto, akce.kategorie, akce.fakulta,
+            t(akce.kategorie), t(akce.fakulta)].join(' ')
         );
         if (text.indexOf(dotaz) === -1) {
           return false;
@@ -125,6 +127,9 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   function textPoctu(n) {
+    if (CZUJazyk.jazyk === 'en') {
+      return n === 1 ? '1 event found.' : n + ' events found.';
+    }
     if (n === 1) {
       return 'Nalezena 1 akce.';
     }
@@ -135,9 +140,9 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   function textVolnychMist(akce) {
-    if (CZUData.probehla(akce)) return 'Proběhlo';
+    if (CZUData.probehla(akce)) return t('Proběhlo');
     const zbyva = Math.max(akce.kapacita - akce.obsazeno, 0);
-    return zbyva === 0 ? 'Obsazeno' : 'Volná místa: ' + zbyva;
+    return zbyva === 0 ? t('Obsazeno') : t('Volná místa: {volno}', { volno: zbyva });
   }
 
   function vykresliRychleFiltry() {
@@ -147,19 +152,19 @@ document.addEventListener('DOMContentLoaded', function () {
     rychleVolna.setAttribute('aria-pressed', String(volna.checked));
     aktivniFiltry.textContent = '';
     const podminky = [
-      { ovladac: hledat, text: 'Hledání: ' + hledat.value.trim() },
-      { ovladac: kategorie, text: 'Kategorie: ' + kategorie.value },
-      { ovladac: fakulta, text: 'Fakulta: ' + fakulta.value },
-      { ovladac: termin, text: 'Termín: ' + termin.options[termin.selectedIndex].text +
-        (termin.value === 'rozsah' ? ' ' + (od.value || '…') + ' – ' + (doData.value || '…') : '') },
-      { ovladac: volna, text: 'Jen volná místa' }
+      { ovladac: hledat, text: t('Hledání: {text}', { text: hledat.value.trim() }) },
+      { ovladac: kategorie, text: t('Kategorie: {text}', { text: t(kategorie.value) }) },
+      { ovladac: fakulta, text: t('Fakulta: {text}', { text: t(fakulta.value) }) },
+      { ovladac: termin, text: t('Termín: {text}', { text: termin.options[termin.selectedIndex].text +
+        (termin.value === 'rozsah' ? ' ' + (od.value || '…') + ' – ' + (doData.value || '…') : '') }) },
+      { ovladac: volna, text: t('Jen volná místa') }
     ];
     podminky.forEach(function (podminka) {
       const ovladac = podminka.ovladac;
       if (!(ovladac === volna ? volna.checked : ovladac.value.trim())) return;
       const tlacitko = CZUApp.prvek('button', 'tlacitko filtr-stitek', podminka.text + ' ×');
       tlacitko.type = 'button';
-      tlacitko.setAttribute('aria-label', 'Zrušit filtr ' + podminka.text);
+      tlacitko.setAttribute('aria-label', t('Zrušit filtr {text}', { text: podminka.text }));
       tlacitko.addEventListener('click', function () {
         if (ovladac === volna) volna.checked = false;
         else ovladac.value = '';
@@ -201,7 +206,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     if (!podleDne.has(vybranyDen)) vybranyDen = '';
-    programNadpis.textContent = vybranyDen ? 'Program vybraného dne' : 'Program měsíce';
+    programNadpis.textContent = t(vybranyDen ? 'Program vybraného dne' : 'Program měsíce');
     programVse.hidden = !vybranyDen;
     nadpisMesice.textContent = formatMesice.format(prvniDen);
     dnyKalendare.textContent = '';
@@ -248,7 +253,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     program.textContent = '';
     if (podleDne.size === 0) {
-      program.appendChild(CZUApp.prvek('p', 'prazdny-stav', 'V tomto měsíci nejsou žádné akce odpovídající filtrům.'));
+      program.appendChild(CZUApp.prvek('p', 'prazdny-stav', t('V tomto měsíci nejsou žádné akce odpovídající filtrům.')));
     }
     podleDne.forEach(function (polozky, den) {
       if (vybranyDen && den !== vybranyDen) return;
@@ -362,7 +367,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     seznam.textContent = '';
     if (neplatnyRozsah) {
-      pocet.textContent = 'Upravte rozsah termínu.';
+      pocet.textContent = t('Upravte rozsah termínu.');
     } else if (kalendarAktivni) {
       if (presunMesic && !akce.some(function (polozka) {
         return CZUData.denAkce(polozka.zacatek).startsWith(mesicKalendare);
@@ -467,7 +472,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   Array.from(fakulta.options).forEach(function (moznost) {
     const kopie = moznost.cloneNode(true);
-    if (!kopie.value) kopie.textContent = 'Vyberte fakultu';
+    if (!kopie.value) kopie.textContent = t('Vyberte fakultu');
     mojeFakulta.appendChild(kopie);
   });
   try {
@@ -502,6 +507,6 @@ document.addEventListener('DOMContentLoaded', function () {
     })
     .catch(function (duvod) {
       pocet.textContent = '';
-      CZUApp.zprava(chyba, 'Akce se nepodařilo načíst. Zkuste stránku obnovit. (' + duvod.message + ')', 'chyba');
+      CZUApp.zprava(chyba, CZUJazyk.t('Akce se nepodařilo načíst. Zkuste stránku obnovit. ({chyba})', { chyba: duvod.message }), 'chyba');
     });
 });

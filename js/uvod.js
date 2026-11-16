@@ -20,6 +20,6 @@ document.addEventListener('DOMContentLoaded', function () {
       });
     })
     .catch(function (duvod) {
-      CZUApp.zprava(chyba, 'Akce se nepodařilo načíst. Zkuste stránku obnovit. (' + duvod.message + ')', 'chyba');
+      CZUApp.zprava(chyba, CZUJazyk.t('Akce se nepodařilo načíst. Zkuste stránku obnovit. ({chyba})', { chyba: duvod.message }), 'chyba');
     });
 });
