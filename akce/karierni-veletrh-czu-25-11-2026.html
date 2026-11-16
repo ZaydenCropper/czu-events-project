@@ -53,6 +53,7 @@
   <script src="../js/jazyk.js" defer></script>
   <script src="../js/data.js" defer></script>
   <script src="../js/app.js" defer></script>
+  <script src="../js/prehled.js" defer></script>
   <script src="../js/detail.js" defer></script>
 </head>
 <body data-koren="../" data-akce-id="karierni-veletrh-czu-25-11-2026" class="ma-listu">
@@ -107,6 +108,22 @@
         </div>
       </div>
     </div>
+    <div class="denni-prehled" role="region" aria-label="Dnešní přehled">
+      <div class="obal prehled-obsah">
+        <div class="prehled-dnes">
+          <time class="prehled-datum"></time>
+          <span class="prehled-tyden"></span>
+        </div>
+        <div class="prehled-pocasi">
+          <span class="prehled-pocasi-ikona" aria-hidden="true">☁</span>
+          <div><span class="prehled-pocasi-text">Suchdol</span><a class="prehled-pocasi-zdroj" href="https://open-meteo.com/">Open-Meteo</a></div>
+        </div>
+        <div class="prehled-profil">
+          <span class="prehled-avatar" aria-hidden="true"></span>
+          <span class="prehled-role-text"></span>
+        </div>
+      </div>
+    </div>
   </header>
 
   <main id="obsah" class="obal">
@@ -145,9 +162,8 @@
 
         <div class="detail-bok">
           <section class="box box-obsazenost" aria-labelledby="akce-obsazenost-text">
-            <h2 id="akce-obsazenost-text">Obsazeno 187/300</h2>
-            <progress id="akce-obsazenost-ukazatel" max="300" value="187" aria-label="Obsazenost"></progress>
-            <p id="akce-zbyva">Zbývá 113 míst</p>
+            <h2 id="akce-obsazenost-text">Volná místa: 113 z 300</h2>
+            <progress id="akce-obsazenost-ukazatel" max="300" value="113" aria-label="Volná místa: 113 z 300"></progress>
             <p id="akce-stav" role="status" hidden></p>
             <div class="prihlaseni-lista">
               <button type="button" class="tlacitko tlacitko-plne tlacitko-sirka" id="akce-tlacitko" disabled>Přihlásit se</button>
