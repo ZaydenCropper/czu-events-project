@@ -102,7 +102,7 @@ a:hover {
   margin: -1px;
   padding: 0;
   overflow: hidden;
-  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
   white-space: nowrap;
   border: 0;
 }
@@ -1325,12 +1325,12 @@ thead th {
    proto mají v HTML atribut hidden. Když JavaScript běží, drží se pro ně
    místo už před načtením dat, aby se obsah po načtení neposunul (nález R1). */
 .js #rychle-filtry[hidden] {
-  display: flex;
+  display: flex !important;
   visibility: hidden;
 }
 
 .js #zobrazeni-akci[hidden] {
-  display: inline-flex;
+  display: inline-flex !important;
   visibility: hidden;
 }
 
@@ -1538,3 +1538,37 @@ thead th {
     border-radius: 12px;
   }
 }
+
+/* Datum, výukový týden, počasí a avatar zvolené role. */
+.denni-prehled { border-bottom: 1px solid var(--linka); background: #f8faf7; }
+.prehled-obsah { display: flex; align-items: center; gap: 1rem 1.5rem; min-height: 78px; padding-top: .65rem; padding-bottom: .65rem; font-size: .85rem; }
+.prehled-dnes { flex: 1; min-width: 0; }
+.prehled-datum { display: block; font-weight: 600; font-variant-numeric: tabular-nums; }
+.prehled-tyden { display: block; color: var(--text-tlumeny); font-size: .78rem; }
+.prehled-pocasi { display: flex; align-items: center; gap: .65rem; min-width: 0; }
+.prehled-pocasi-ikona { font-size: 1.7rem; line-height: 1; color: var(--znacka); }
+.prehled-pocasi-text { display: block; }
+.prehled-pocasi-zdroj { display: inline-flex; align-items: center; min-height: 24px; font-size: .75rem; color: var(--text-tlumeny); text-underline-offset: 3px; }
+.prehled-profil { display: flex; align-items: center; gap: .5rem; font-weight: 600; }
+.prehled-avatar { display: grid; place-items: center; width: 38px; height: 38px; flex-shrink: 0; color: var(--znacka); background: var(--znacka-svetla); border: 1px solid var(--linka); border-radius: 50%; }
+.prehled-avatar svg { width: 25px; height: 25px; }
+@media (max-width: 699px) {
+  .prehled-obsah { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: .5rem .75rem; min-height: 130px; }
+  .prehled-dnes { grid-column: 1; grid-row: 1; }
+  .prehled-profil { grid-column: 2; grid-row: 1; }
+  .prehled-profil { flex-direction: column; gap: .1rem; font-size: .75rem; }
+  .prehled-pocasi { grid-column: 1 / -1; grid-row: 2; }
+  .prehled-pocasi > div { display: flex; align-items: center; flex-wrap: wrap; gap: 0 .6rem; }
+}
+
+/* Dotažení ovládání: menší vizuální váha filtrů, zachované dotykové plochy. */
+.filtry-termin, .filtry-ostatni { display: flex; flex-wrap: wrap; align-items: flex-start; gap: .25rem; min-width: 0; max-width: 100%; }
+.filtry-termin { padding: .2rem; border-radius: 12px; background: var(--pozadi-sede); }
+.filtry-ostatni { gap: .5rem; padding: .2rem 0; }
+.rychle-filtry { gap: .35rem 1rem; }
+.rychle-filtry .tlacitko { min-height: 44px; padding: .55rem .75rem; font-size: .875rem; font-weight: 600; }
+.filtry-termin .tlacitko { background: transparent; border-color: transparent; }
+.filtry-termin .tlacitko[aria-pressed="true"] { background: var(--znacka); border-color: var(--znacka); }
+.drobecky a, .zpet, .paticka a, .kalendar-udaje > a, .kalendar-nahled { display: inline-flex; align-items: center; min-height: 44px; padding: .4rem .15rem; }
+.mistni-uloziste { max-width: 65ch; padding: .75rem 1rem; border-left: 3px solid var(--zelena-logo); background: var(--pozadi-sede); color: var(--text); }
+@media (min-width: 900px) { .prehled-profil { display: none; } }
