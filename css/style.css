@@ -1592,3 +1592,13 @@ thead th {
   .uvod-hlavni { grid-template-columns: minmax(0, 1.8fr) minmax(290px, 1fr); gap: 2.5rem; }
   .uvod-tip { margin-top: .5rem; }
 }
+
+/* Klasické hledání se spouští odesláním formuláře. */
+form.hledani { display: flex; align-items: stretch; gap: .5rem; max-width: 44rem; }
+form.hledani input { flex: 1; min-width: 0; width: auto; }
+form.hledani button { flex-shrink: 0; }
+@media (max-width: 359px) {
+  form.hledani { flex-wrap: wrap; }
+  form.hledani input { flex-basis: 100%; }
+  form.hledani button { width: 100%; }
+}
