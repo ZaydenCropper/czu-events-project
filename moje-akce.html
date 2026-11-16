@@ -11,6 +11,7 @@
   <script src="js/jazyk.js" defer></script>
   <script src="js/data.js" defer></script>
   <script src="js/app.js" defer></script>
+  <script src="js/prehled.js" defer></script>
   <script src="js/moje-akce.js" defer></script>
 </head>
 <body data-koren="">
@@ -62,6 +63,22 @@
         <div class="jazyk" role="group" aria-label="Jazyk">
           <button type="button" class="jazyk-volba" data-jazyk-volba="cs" lang="cs" aria-pressed="true">CZ<span class="skryte-vizualne" translate="no"> – čeština</span></button>
           <button type="button" class="jazyk-volba" data-jazyk-volba="en" lang="en" aria-pressed="false">EN<span class="skryte-vizualne" translate="no"> – English</span></button>
+        </div>
+      </div>
+    </div>
+    <div class="denni-prehled" role="region" aria-label="Dnešní přehled">
+      <div class="obal prehled-obsah">
+        <div class="prehled-dnes">
+          <time class="prehled-datum"></time>
+          <span class="prehled-tyden"></span>
+        </div>
+        <div class="prehled-pocasi">
+          <span class="prehled-pocasi-ikona" aria-hidden="true">☁</span>
+          <div><span class="prehled-pocasi-text">Suchdol</span><a class="prehled-pocasi-zdroj" href="https://open-meteo.com/">Open-Meteo</a></div>
+        </div>
+        <div class="prehled-profil">
+          <span class="prehled-avatar" aria-hidden="true"></span>
+          <span class="prehled-role-text"></span>
         </div>
       </div>
     </div>
