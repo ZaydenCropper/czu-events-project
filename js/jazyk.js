@@ -195,6 +195,8 @@ const CZUJazyk = (function () {
     'Zbývají {volno} místa': '{volno} places left',
     'Zbývá {volno} míst': '{volno} places left',
     'Přidat do kalendáře': 'Add to calendar',
+    'Stáhne soubor ICS pro váš kalendář.': 'Downloads an ICS file for your calendar.',
+    'Soubor kalendáře byl připraven ke stažení.': 'The calendar file is ready to download.',
     'Pořádá: {poradatel}': 'Organised by: {poradatel}',
     'Mapa místa konání': 'Venue map',
     'Mapu se nepodařilo načíst. Polohu otevřete odkazem pod mapou.':

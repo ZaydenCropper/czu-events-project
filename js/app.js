@@ -189,9 +189,54 @@ const CZUApp = (function () {
     });
   }
 
+  /* Enter otevře výběr fakulty. Pokud prohlížeč nemá showPicker,
+     nabídneme nativní seznam a zachováme šipky, Enter, Escape i Tab. */
+  function nastavVyberFakulty() {
+    document.querySelectorAll('select#fakulta, select#moje-fakulta').forEach(function (vyber) {
+      let rozbaleny = false;
+      let puvodniVelikost = null;
+      let puvodniHodnota = '';
+      function zavri() {
+        if (!rozbaleny) return;
+        if (puvodniVelikost === null) vyber.removeAttribute('size');
+        else vyber.setAttribute('size', puvodniVelikost);
+        rozbaleny = false;
+      }
+      vyber.addEventListener('keydown', function (udalost) {
+        if (udalost.key === 'Escape' && rozbaleny) {
+          udalost.preventDefault();
+          udalost.stopPropagation();
+          vyber.value = puvodniHodnota;
+          zavri();
+          vyber.dispatchEvent(new Event('change', { bubbles: true }));
+          return;
+        }
+        if (udalost.key !== 'Enter' || udalost.isComposing || vyber.disabled) return;
+        udalost.preventDefault();
+        if (rozbaleny) {
+          zavri();
+          vyber.dispatchEvent(new Event('change', { bubbles: true }));
+          return;
+        }
+        if (typeof vyber.showPicker === 'function') {
+          try { vyber.showPicker(); return; } catch (chyba) { /* Použije se nativní seznam. */ }
+        }
+        puvodniVelikost = vyber.getAttribute('size');
+        puvodniHodnota = vyber.value;
+        vyber.size = Math.max(2, Math.min(vyber.options.length, 8));
+        rozbaleny = true;
+      });
+      vyber.addEventListener('blur', zavri);
+      vyber.addEventListener('click', function (udalost) {
+        if (rozbaleny && udalost.detail > 0) zavri();
+      });
+    });
+  }
+
   document.addEventListener('DOMContentLoaded', function () {
     nastavPrepinacRole();
     nastavMenu();
+    nastavVyberFakulty();
   });
 
   return {

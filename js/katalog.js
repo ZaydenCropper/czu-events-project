@@ -39,6 +39,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const programNadpis = document.getElementById('program-nadpis');
   const programVse = document.getElementById('program-vse');
   let vybranyDen = '';
+  let pouzityDotaz = '';
   let vsechnyAkce = [];
   let kalendarAktivni = false;
   let mesicKalendare = '';
@@ -98,7 +99,7 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   function vyfiltruj() {
-    const dotaz = zjednodus(hledat.value.trim());
+    const dotaz = zjednodus(pouzityDotaz);
 
     return vsechnyAkce.filter(function (akce) {
       if (kategorie.value && akce.kategorie !== kategorie.value) {
@@ -152,7 +153,7 @@ document.addEventListener('DOMContentLoaded', function () {
     rychleVolna.setAttribute('aria-pressed', String(volna.checked));
     aktivniFiltry.textContent = '';
     const podminky = [
-      { ovladac: hledat, text: t('Hledání: {text}', { text: hledat.value.trim() }) },
+      { ovladac: hledat, text: t('Hledání: {text}', { text: pouzityDotaz }) },
       { ovladac: kategorie, text: t('Kategorie: {text}', { text: t(kategorie.value) }) },
       { ovladac: fakulta, text: t('Fakulta: {text}', { text: t(fakulta.value) }) },
       { ovladac: termin, text: t('Termín: {text}', { text: termin.options[termin.selectedIndex].text +
@@ -161,12 +162,13 @@ document.addEventListener('DOMContentLoaded', function () {
     ];
     podminky.forEach(function (podminka) {
       const ovladac = podminka.ovladac;
-      if (!(ovladac === volna ? volna.checked : ovladac.value.trim())) return;
+      if (!(ovladac === volna ? volna.checked : ovladac === hledat ? pouzityDotaz : ovladac.value.trim())) return;
       const tlacitko = CZUApp.prvek('button', 'tlacitko filtr-stitek', podminka.text + ' ×');
       tlacitko.type = 'button';
       tlacitko.setAttribute('aria-label', t('Zrušit filtr {text}', { text: podminka.text }));
       tlacitko.addEventListener('click', function () {
-        if (ovladac === volna) volna.checked = false;
+        if (ovladac === hledat) { pouzityDotaz = ''; hledat.value = ''; }
+        else if (ovladac === volna) volna.checked = false;
         else ovladac.value = '';
         vykresliPoFiltru();
         hledat.focus();
@@ -289,8 +291,8 @@ document.addEventListener('DOMContentLoaded', function () {
   /* Uloží nastavení filtrů do adresy, aby šel výsledek sdílet odkazem. */
   function zapisAdresu() {
     const parametry = new URLSearchParams();
-    if (hledat.value.trim()) {
-      parametry.set('q', hledat.value.trim());
+    if (pouzityDotaz) {
+      parametry.set('q', pouzityDotaz);
     }
     if (kategorie.value) {
       parametry.set('kategorie', kategorie.value);
@@ -327,6 +329,7 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     hledat.value = parametry.get('q') || '';
+    pouzityDotaz = hledat.value.trim();
     if (maMoznost(kategorie, parametry.get('kategorie') || '')) {
       kategorie.value = parametry.get('kategorie') || '';
     }
@@ -402,7 +405,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   function jeNastavenFiltr() {
     return (
-      hledat.value.trim() !== '' ||
+      pouzityDotaz !== '' ||
       kategorie.value !== '' ||
       fakulta.value !== '' ||
       termin.value !== '' ||
@@ -417,6 +420,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   function zrusFiltry() {
     hledat.value = '';
+    pouzityDotaz = '';
     kategorie.value = '';
     fakulta.value = '';
     termin.value = '';
@@ -429,7 +433,12 @@ document.addEventListener('DOMContentLoaded', function () {
   [kategorie, fakulta, termin, od, doData, volna].forEach(function (ovladac) {
     ovladac.addEventListener('change', vykresliPoFiltru);
   });
-  hledat.addEventListener('input', vykresliPoFiltru);
+  /* Rozepsaný text se použije až po odeslání formuláře tlačítkem nebo Enter. */
+  document.getElementById('hledani-formular').addEventListener('submit', function (udalost) {
+    udalost.preventDefault();
+    pouzityDotaz = hledat.value.trim();
+    vykresliPoFiltru();
+  });
   zobrazSeznam.addEventListener('click', function () {
     kalendarAktivni = false;
     vykresli();

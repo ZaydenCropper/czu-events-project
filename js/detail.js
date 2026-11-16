@@ -94,11 +94,32 @@ document.addEventListener('DOMContentLoaded', function () {
       return vysledek;
     }).join('\r\n') + '\r\n';
     const soubor = new Blob([obsah], { type: 'text/calendar;charset=utf-8' });
-    const odkaz = CZUApp.prvek('a', 'tlacitko', t('Přidat do kalendáře'));
-    odkaz.href = URL.createObjectURL(soubor);
-    odkaz.download = akce.id.replace(/[^a-z0-9-]/gi, '-') + '.ics';
+    const tlacitkoKalendar = CZUApp.prvek('button', 'tlacitko', t('Přidat do kalendáře'));
+    tlacitkoKalendar.type = 'button';
+    tlacitkoKalendar.setAttribute('aria-label', t('Přidat do kalendáře'));
+    tlacitkoKalendar.setAttribute('aria-describedby', 'kalendar-napoveda');
+    const napoveda = CZUApp.prvek('span', 'skryte-vizualne', t('Stáhne soubor ICS pro váš kalendář.'));
+    napoveda.id = 'kalendar-napoveda';
+    const potvrzeni = CZUApp.prvek('span', 'skryte-vizualne');
+    potvrzeni.setAttribute('role', 'status');
+    tlacitkoKalendar.addEventListener('click', function () {
+      /* Blob URL není ovládací prvek: čtečka oznamuje tlačítko, nikoli adresu. */
+      const adresa = URL.createObjectURL(soubor);
+      const stahnout = document.createElement('a');
+      stahnout.href = adresa;
+      stahnout.download = akce.id.replace(/[^a-z0-9-]/gi, '-') + '.ics';
+      stahnout.hidden = true;
+      document.body.appendChild(stahnout);
+      stahnout.click();
+      stahnout.remove();
+      setTimeout(function () { URL.revokeObjectURL(adresa); }, 60000);
+      potvrzeni.textContent = '';
+      requestAnimationFrame(function () {
+        potvrzeni.textContent = t('Soubor kalendáře byl připraven ke stažení.');
+      });
+    });
     const radek = CZUApp.prvek('p', 'detail-kalendar');
-    radek.appendChild(odkaz);
+    radek.append(tlacitkoKalendar, napoveda, potvrzeni);
     document.querySelector('.detail-udaje').insertAdjacentElement('afterend', radek);
   }
 
