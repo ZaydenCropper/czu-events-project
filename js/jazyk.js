@@ -78,7 +78,10 @@ const CZUJazyk = (function () {
     'Hledat': 'Search',
     'Kalendář akcí': 'Event calendar',
     'Kategorie akcí': 'Event categories',
-    'Nejbližší akce': 'Upcoming events',
+    'Nejbližší akce': 'Next event',
+    'Další nadcházející akce': 'More upcoming events',
+    'Momentálně nejsou žádné nadcházející akce.': 'There are currently no upcoming events.',
+    'Nejbližší akci se nepodařilo načíst.': 'The next event could not be loaded.',
     'Zobrazit všechny akce': 'Show all events',
 
     /* ---------- Kategorie a fakulty ---------- */
