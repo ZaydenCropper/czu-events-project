@@ -277,6 +277,7 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('detail-obsah').hidden = true;
     nenalezeno.hidden = false;
     clanek.hidden = false;
+    clanek.removeAttribute('aria-busy');
     document.body.classList.remove('ma-listu');
     CZUJazyk.odkryj();
   }
@@ -298,6 +299,7 @@ document.addEventListener('DOMContentLoaded', function () {
         vyplnSablonu(akce);
       }
       clanek.hidden = false;
+      clanek.removeAttribute('aria-busy');
       CZUJazyk.odkryj();
       vykresliStav(akce);
       pripravOsobniKalendar(akce);

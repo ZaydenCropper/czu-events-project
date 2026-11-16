@@ -19,4 +19,6 @@
   document.documentElement.setAttribute('data-role', role);
   document.documentElement.setAttribute('data-jazyk', jazyk);
   document.documentElement.setAttribute('lang', jazyk);
+  /* Třída js: styly mohou počítat s tím, že JavaScript běží. */
+  document.documentElement.classList.add('js');
 })();

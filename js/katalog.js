@@ -501,12 +501,14 @@ document.addEventListener('DOMContentLoaded', function () {
   CZUData.nactiAkce()
     .then(function (akce) {
       vsechnyAkce = akce;
+      seznam.removeAttribute('aria-busy');
       prepinacZobrazeni.hidden = false;
       rychleFiltry.hidden = false;
       vykresli();
     })
     .catch(function (duvod) {
       pocet.textContent = '';
+      seznam.removeAttribute('aria-busy');
       CZUApp.zprava(chyba, CZUJazyk.t('Akce se nepodařilo načíst. Zkuste stránku obnovit. ({chyba})', { chyba: duvod.message }), 'chyba');
     });
 });
