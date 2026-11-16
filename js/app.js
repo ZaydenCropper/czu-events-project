@@ -24,8 +24,9 @@ const CZUApp = (function () {
     timeZone: 'Europe/Prague'
   });
 
-  function textObsazenosti(akce) {
-    return t('Obsazeno {obsazeno}/{kapacita}', { obsazeno: akce.obsazeno, kapacita: akce.kapacita });
+  function textVolnychMist(akce) {
+    const volno = Math.max(akce.kapacita - akce.obsazeno, 0);
+    return volno === 0 ? t('Obsazeno') : t('Volná místa: {volno} z {kapacita}', { volno: volno, kapacita: akce.kapacita });
   }
 
   function ukazatelVolnychMist(akce) {
@@ -178,6 +179,14 @@ const CZUApp = (function () {
       const otevrene = menu.classList.toggle('otevrene');
       tlacitko.setAttribute('aria-expanded', otevrene ? 'true' : 'false');
     });
+    document.addEventListener('keydown', function (udalost) {
+      if (udalost.key !== 'Escape' || !menu.classList.contains('otevrene') ||
+          window.getComputedStyle(tlacitko).display === 'none') return;
+      udalost.preventDefault();
+      menu.classList.remove('otevrene');
+      tlacitko.setAttribute('aria-expanded', 'false');
+      tlacitko.focus();
+    });
   }
 
   document.addEventListener('DOMContentLoaded', function () {
@@ -188,7 +197,7 @@ const CZUApp = (function () {
   return {
     prvek: prvek,
     kartaAkce: kartaAkce,
-    textObsazenosti: textObsazenosti,
+    textVolnychMist: textVolnychMist,
     zprava: zprava
   };
 })();

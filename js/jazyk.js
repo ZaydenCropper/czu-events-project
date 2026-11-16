@@ -21,6 +21,11 @@ const CZUJazyk = (function () {
   const locale = jazyk === 'en' ? 'en-GB' : 'cs-CZ';
 
   const SLOVNIK = {
+    'Termín akce': 'Event date',
+    'Další možnosti filtrování': 'Other filter options',
+    'Volná místa': 'Free places',
+    'Akce se uloží pouze v tomto prohlížeči. Ostatní návštěvníci ji neuvidí.':
+      'The event is saved only in this browser. Other visitors will not see it.',
     /* ---------- Hlavička, navigace a patička ---------- */
     'Přeskočit na obsah': 'Skip to content',
     'Studentský projekt na PEF ČZU. Nejde o oficiální web univerzity.':

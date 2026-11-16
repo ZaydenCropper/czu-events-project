@@ -21,25 +21,10 @@ document.addEventListener('DOMContentLoaded', function () {
   const nenalezeno = document.getElementById('nenalezeno');
   const obsazenostText = document.getElementById('akce-obsazenost-text');
   const obsazenostUkazatel = document.getElementById('akce-obsazenost-ukazatel');
-  const zbyva = document.getElementById('akce-zbyva');
   const tlacitko = document.getElementById('akce-tlacitko');
   const poznamka = document.getElementById('akce-poznamka');
   const stav = document.getElementById('akce-stav');
   const mapa = document.getElementById('akce-mapa');
-
-  function textZbyva(akce) {
-    const volno = Math.max(akce.kapacita - akce.obsazeno, 0);
-    if (volno === 0) {
-      return t('Všechna místa jsou obsazená');
-    }
-    if (volno === 1) {
-      return t('Zbývá 1 místo');
-    }
-    if (volno >= 2 && volno <= 4) {
-      return t('Zbývají {volno} místa', { volno: volno });
-    }
-    return t('Zbývá {volno} míst', { volno: volno });
-  }
 
   /* Doplní obsah šablony detail.html z dat akce. V angličtině se takto
      přepíše i statická stránka, protože její HTML obsahuje české texty. */
@@ -118,14 +103,13 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   function vykresliObsazenost(akce) {
-    obsazenostText.textContent = CZUApp.textObsazenosti(akce);
+    obsazenostText.textContent = CZUApp.textVolnychMist(akce);
     obsazenostUkazatel.max = akce.kapacita;
-    obsazenostUkazatel.value = Math.min(akce.obsazeno, akce.kapacita);
+    obsazenostUkazatel.value = Math.max(akce.kapacita - akce.obsazeno, 0);
     obsazenostUkazatel.setAttribute(
       'aria-label',
-      t('Obsazenost: {obsazeno} z {kapacita} míst', { obsazeno: akce.obsazeno, kapacita: akce.kapacita })
+      t('Volná místa: {volno} z {kapacita}', { volno: Math.max(akce.kapacita - akce.obsazeno, 0), kapacita: akce.kapacita })
     );
-    zbyva.textContent = textZbyva(akce);
   }
 
   /* Nastaví tlačítko a vysvětlující text podle role a stavu akce. */
