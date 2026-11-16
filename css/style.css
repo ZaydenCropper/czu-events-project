@@ -1015,7 +1015,7 @@ body.ma-listu {
   padding: 1.75rem 0 2.25rem;
 }
 
-.uvod-hlavni p {
+.uvod-text > p {
   max-width: 44rem;
   font-size: 1.1rem;
 }
@@ -1572,3 +1572,23 @@ thead th {
 .drobecky a, .zpet, .paticka a, .kalendar-udaje > a, .kalendar-nahled { display: inline-flex; align-items: center; min-height: 44px; padding: .4rem .15rem; }
 .mistni-uloziste { max-width: 65ch; padding: .75rem 1rem; border-left: 3px solid var(--zelena-logo); background: var(--pozadi-sede); color: var(--text); }
 @media (min-width: 900px) { .prehled-profil { display: none; } }
+
+/* Úvod: hledání vlevo a jediná nejbližší akce vpravo. */
+.uvod-hlavni { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.5rem; align-items: start; }
+.uvod-text { min-width: 0; }
+.uvod-tip { min-width: 0; min-height: 310px; padding: 1.5rem; border: 1px solid var(--linka); border-top: 3px solid var(--zelena-logo); border-radius: 14px; background: #f8faf7; }
+.js .uvod-tip[hidden] { display: block !important; visibility: hidden; }
+.uvod-tip h2 { margin: 0 0 1.25rem; font-size: .75rem; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; color: var(--znacka); }
+.uvod-tip h3 { margin: .5rem 0 .6rem; font-size: 1.35rem; line-height: 1.3; overflow-wrap: anywhere; }
+.uvod-tip p { margin: .6rem 0; font-size: .9rem; }
+.uvod-tip .tip-termin { font-size: .95rem; font-weight: 600; }
+.uvod-tip .tip-misto { color: var(--text-tlumeny); }
+.uvod-tip .tip-volno { color: var(--znacka); }
+.tip-volno::before { content: ""; display: inline-block; width: .45rem; height: .45rem; margin-right: .45rem; border-radius: 50%; background: var(--zelena-logo); vertical-align: .08rem; }
+.uvod-tip .tip-plno { color: var(--text-tlumeny); }
+.tip-plno::before { background: var(--text-tlumeny); }
+.uvod-tip .tlacitko { margin-top: .75rem; }
+@media (min-width: 1000px) {
+  .uvod-hlavni { grid-template-columns: minmax(0, 1.8fr) minmax(290px, 1fr); gap: 2.5rem; }
+  .uvod-tip { margin-top: .5rem; }
+}
