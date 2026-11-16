@@ -86,6 +86,7 @@
 
   <main id="obsah" class="obal">
     <section class="uvod-hlavni" aria-labelledby="uvod-nadpis">
+      <div class="uvod-text">
       <h1 id="uvod-nadpis">Akce ČZU na jednom místě</h1>
       <p>Přednášky, workshopy, kariérní, sportovní a spolkové akce v areálu ČZU v Praze-Suchdole. Najděte si akci podle zájmu, fakulty a termínu a přihlaste se.</p>
       <form class="velke-hledani" action="akce.html" method="get" role="search">
@@ -94,6 +95,11 @@
         <button type="submit" class="tlacitko tlacitko-plne">Hledat</button>
       </form>
       <a class="tlacitko" href="akce.html?zobrazeni=kalendar">Kalendář akcí</a>
+      </div>
+      <aside class="uvod-tip" aria-labelledby="tip-nadpis" hidden>
+        <h2 id="tip-nadpis">Nejbližší akce</h2>
+        <div id="tip-obsah" aria-busy="true"></div>
+      </aside>
     </section>
 
     <section class="sekce" aria-labelledby="kategorie-nadpis">
@@ -108,9 +114,10 @@
       </ul>
     </section>
 
-    <section class="sekce" aria-labelledby="nejblizsi-nadpis">
-      <h2 id="nejblizsi-nadpis">Nejbližší akce</h2>
-      <p id="chyba" role="alert" hidden></p>
+    <p id="chyba" role="alert" hidden></p>
+
+    <section class="sekce" id="dalsi-akce" aria-labelledby="nejblizsi-nadpis">
+      <h2 id="nejblizsi-nadpis">Další nadcházející akce</h2>
       <ul class="seznam-akci" id="nejblizsi"></ul>
       <noscript>
         <p>Seznam akcí se načítá JavaScriptem. Ukázkové akce: <a href="akce/internetove-technologie-20-11-2026.html">Internetové technologie – client side</a>, <a href="akce/karierni-veletrh-czu-25-11-2026.html">Kariérní veletrh ČZU</a>, <a href="akce/den-otevrenych-dveri-czu-27-11-2026.html">Den otevřených dveří ČZU</a>.</p>
