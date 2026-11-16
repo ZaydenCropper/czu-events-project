@@ -375,7 +375,15 @@ document.addEventListener('DOMContentLoaded', function () {
       }, 0);
       pocet.textContent = textPoctu(pocetVMesici);
     } else {
-      akce.forEach(function (polozka) {
+      /* V seznamu jsou nahoře nadcházející akce od nejbližší.
+         Akce, které už proběhly, jsou až na konci, od nejnovější. */
+      const nadchazejici = akce.filter(function (polozka) {
+        return !CZUData.probehla(polozka);
+      });
+      const probehle = akce.filter(function (polozka) {
+        return CZUData.probehla(polozka);
+      }).reverse();
+      nadchazejici.concat(probehle).forEach(function (polozka) {
         seznam.appendChild(CZUApp.kartaAkce(polozka, 2));
       });
       pocet.textContent = textPoctu(akce.length);

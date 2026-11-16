@@ -112,18 +112,58 @@ const CZUApp = (function () {
     cil.hidden = text === '';
   }
 
+  /* Přepínač role: tři přepínací volby s ikonou (host, student, pořadatel).
+     Po změně se stránka načte znovu, aby se obsah i navigace vykreslily
+     pro novou roli. Fokus se pak vrátí na zvolenou roli, aby uživatel
+     klávesnice nezačínal znovu od začátku stránky. */
+  const KLIC_FOKUS_ROLE = 'czu-events-05.fokus-role';
+
   function nastavPrepinacRole() {
-    const vyber = document.getElementById('role');
-    if (!vyber) {
+    const volby = document.querySelectorAll('.role-vstup');
+    if (volby.length === 0) {
       return;
     }
-    vyber.value = CZUData.nactiRoli();
-    vyber.addEventListener('change', function () {
-      CZUData.ulozRoli(vyber.value);
-      /* Po změně role se stránka načte znovu, aby se obsah
-         i navigace vykreslily pro novou roli. */
-      window.location.reload();
+    const role = CZUData.nactiRoli();
+    volby.forEach(function (volba) {
+      volba.checked = volba.value === role;
+      volba.addEventListener('change', function () {
+        if (!volba.checked) {
+          return;
+        }
+        CZUData.ulozRoli(volba.value);
+        /* Fokus se vrací jen při ovládání klávesnicí, po kliknutí myší ne. */
+        const zKlavesnice = volba.matches(':focus-visible');
+        try {
+          if (zKlavesnice) {
+            window.sessionStorage.setItem(KLIC_FOKUS_ROLE, '1');
+          }
+        } catch (chyba) {
+          /* Bez úložiště se jen nevrátí fokus, přepnutí role funguje. */
+        }
+        window.location.reload();
+      });
     });
+
+    let vratitFokus = false;
+    try {
+      vratitFokus = window.sessionStorage.getItem(KLIC_FOKUS_ROLE) === '1';
+      window.sessionStorage.removeItem(KLIC_FOKUS_ROLE);
+    } catch (chyba) {
+      vratitFokus = false;
+    }
+    if (vratitFokus) {
+      const zvolena = document.getElementById('role-' + role);
+      if (zvolena) {
+        /* Na mobilu je přepínač v menu, které je potřeba nejdřív otevřít. */
+        const menu = document.getElementById('menu');
+        const tlacitko = document.getElementById('menu-tlacitko');
+        if (menu && tlacitko && window.getComputedStyle(menu).display === 'none') {
+          menu.classList.add('otevrene');
+          tlacitko.setAttribute('aria-expanded', 'true');
+        }
+        zvolena.focus();
+      }
+    }
   }
 
   function nastavMenu() {

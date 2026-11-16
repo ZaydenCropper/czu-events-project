@@ -239,14 +239,88 @@ html[data-role="poradatel"] .navigace [data-role~="poradatel"] {
   display: list-item;
 }
 
-.role label {
-  display: block;
+/* Přepínač role: tři volby s ikonou v jednom „segmentovém“ ovladači. */
+.role {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.role-popisek {
   font-size: 0.85rem;
+  font-weight: 600;
   color: var(--text-tlumeny);
 }
 
-.role select {
-  width: 100%;
+.role-volby {
+  display: flex;
+  gap: 0.25rem;
+  padding: 0.25rem;
+  background: #ffffff;
+  border: 1px solid var(--linka);
+  border-radius: 999px;
+}
+
+/* Přepínač zůstává pro klávesnici a čtečky skutečným polem typu radio,
+   vidět je jen jeho popisek s ikonou. */
+.role-vstup {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  opacity: 0;
+}
+
+.role-volba {
+  display: inline-flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  min-height: 44px;
+  padding: 0.25rem 0.85rem 0.25rem 0.55rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  white-space: nowrap;
+  color: var(--text);
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.role-ikona {
+  flex: none;
+  width: 26px;
+  height: 26px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@media (hover: hover) {
+  .role-volba:hover {
+    background: var(--pozadi-sede);
+  }
+}
+
+/* Zvolená role: podle atributu, který nastaví js/role.js ještě před
+   vykreslením stránky, takže při načtení nic neproblikne. */
+html[data-role="host"] .role-volba[for="role-host"],
+html[data-role="student"] .role-volba[for="role-student"],
+html[data-role="poradatel"] .role-volba[for="role-poradatel"],
+.role-vstup:checked + .role-volba {
+  color: #ffffff;
+  background: var(--znacka);
+}
+
+.role-vstup:focus-visible + .role-volba {
+  outline: 3px solid var(--znacka);
+  outline-offset: 2px;
 }
 
 /* ---------- Tlačítka a formuláře ---------- */
@@ -1045,13 +1119,14 @@ thead th {
   }
 
   .role {
-    display: flex;
+    flex-direction: row;
     align-items: center;
     gap: 0.5rem;
   }
 
-  .role select {
-    width: auto;
+  .role-volba {
+    flex: none;
+    min-height: 40px;
   }
 
   .seznam-akci {
