@@ -88,10 +88,11 @@
     <h1>Akce na ČZU</h1>
 
     <div class="katalog-ovladani">
-      <div class="hledani" role="search">
+      <form class="hledani" id="hledani-formular" role="search" action="akce.html" method="get">
         <label class="skryte-vizualne" for="hledat">Hledat akci</label>
-        <input type="search" id="hledat" placeholder="Hledat akci…" autocomplete="off">
-      </div>
+        <input type="search" id="hledat" name="q" placeholder="Hledat akci…" autocomplete="off">
+        <button type="submit" class="tlacitko tlacitko-plne">Hledat</button>
+      </form>
 
       <div class="rychle-filtry" id="rychle-filtry" aria-label="Rychlé filtry" role="group" hidden>
         <div class="filtry-termin" role="group" aria-label="Termín akce">
