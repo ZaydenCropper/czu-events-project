@@ -1321,6 +1321,25 @@ thead th {
   margin-bottom: 1rem;
 }
 
+/* Rychlé filtry a přepínač Seznam / Kalendář fungují jen s JavaScriptem,
+   proto mají v HTML atribut hidden. Když JavaScript běží, drží se pro ně
+   místo už před načtením dat, aby se obsah po načtení neposunul (nález R1). */
+.js #rychle-filtry[hidden] {
+  display: flex;
+  visibility: hidden;
+}
+
+.js #zobrazeni-akci[hidden] {
+  display: inline-flex;
+  visibility: hidden;
+}
+
+/* Dokud se načítají data (aria-busy), je obsah stránky aspoň na výšku okna,
+   takže patička se neukáže nahoře a pak neodskočí dolů. */
+.js main:has([aria-busy="true"]) {
+  min-height: 100vh;
+}
+
 .rychle-filtry [aria-pressed="true"] {
   color: #ffffff;
   background: var(--znacka);
